@@ -20,16 +20,20 @@ export class Blazer {
             0x13, 0xB , 0x00, 0x00, // (42) pixels/meter v
             0x00, 0x00, 0x00, 0x00, // (46) skip color/important colors
             0x00, 0x00, 0x00, 0x00, // (50) skip color/important colors
-            0x00, 0x00, 0xFF, 0x00, // (54) red channel mask
-            0x00, 0xFF, 0x00, 0x00, // (60) green channel mask
-            0xFF, 0x00, 0x00, 0x00, // (64) blue channel mask
-            0x00, 0x00, 0x00, 0xFF, // (66) alpha channel mask
+            0x00, 0xFF, 0x00, 0x00, // (54) red channel mask
+            0x00, 0x00, 0xFF, 0x00, // (60) green channel mask
+            0x00, 0x00, 0x00, 0xFF, // (64) blue channel mask
+            0xFF, 0x00, 0x00, 0x00, // (66) alpha channel mask
+            //0xFF, 0x00, 0x00, 0x00, // (54) red channel mask
+            //0x00, 0xFF, 0x00, 0x00, // (60) green channel mask
+            //0x00, 0x00, 0xFF, 0x00, // (64) blue channel mask
+            //0x00, 0x00, 0x00, 0xFF, // (66) alpha channel mask
             0x20, 0x6e, 0x69, 0x57  // (70) " win" color space
         ]);
         return this;
     }
 
-    async context(ctx, w, h) {
+    context(ctx, w, h) {
         this.ctx = ctx, this.w = w, this.h = h;
         let stride         = ((32 * w + 31) / 32) << 2,
             pixelArraySize = stride * h;
@@ -51,11 +55,11 @@ export class Blazer {
     }
 
     // for real-time animations support
-    async record(encodeBGR=true) {
+    record(encodeARGB=true) {
         let idata = this.ctx.getImageData(0, 0, this.w, this.h);
         let _idat = this._from + 122;
         new Uint32Array(this._module.memory.buffer, _idat, idata.data.length>>2).set(new Uint32Array(idata.data.buffer));
-        if (encodeBGR) this._module.makeBGR(_idat, this.w, this.h);
+        if (encodeARGB) this._module.makeARGB(_idat, this.w, this.h);
         return new Blob([new Uint8Array(this._module.memory.buffer, this._from, this.fileLength)], {type: "image/bmp"});
     }
 }

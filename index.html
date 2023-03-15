@@ -19,6 +19,9 @@
                 image.onload = ()=>{ resolve(image); };
                 image.onerror = (e) => { reject(e); };
             });
+            image.decoding = "async";
+            image.importance = "high";
+            image.loading = "eager";
             image.src = await url;
 
             // FOR DEBUG!
@@ -40,11 +43,14 @@
         ctx.fillRect(64, 64, 128, 128);
 
         //
-        let blazer = await (await new Blazer().init()).context(ctx, canvas.width, canvas.height);
+        let blazer = (await new Blazer().init()).context(ctx, canvas.width, canvas.height);
         console.time("How fast to encoding BMP?");
-        let blob = await blazer.record();
+        let blob = blazer.record();
+        
         let image = await loadImage(URL.createObjectURL(blob));
         console.timeEnd("How fast to encoding BMP?");
+        
+        
 
         //
         document.body.appendChild(image);
