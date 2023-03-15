@@ -1,0 +1,30 @@
+{
+  "name": "blazer",
+  "version": "1.0.0",
+  "description": "Getting BMP image fast as possible",
+  "main": "blazer.js",
+  "scripts": {
+    "test": "node tests",
+    "asbuild:debug": "asc assembly/index.ts --initialMemory 256 --maximumMemory unlimited --exportRuntime  --enable simd --enable relaxed-simd -Ospeed --optimizeLevel 3  --target debug",
+    "asbuild:release": "asc assembly/index.ts --initialMemory 256 --maximumMemory unlimited --exportRuntime  --enable simd --enable relaxed-simd  -Ospeed --optimizeLevel 3 --target release",
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "blazer",
+    "bmp",
+    "canvas"
+  ],
+  "author": "hydra2s",
+  "license": "MIT",
+  "devDependencies": {
+    "assemblyscript": "^0.27.1"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./build/release.js",
+      "types": "./build/release.d.ts"
+    }
+  }
+}
