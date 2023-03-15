@@ -4,7 +4,54 @@ export class Blazer {
     }
 
     async init() {
-        this._module = await import("./build/release.js");
+        this.getPixelPack = ()=>{ return 0; };
+
+        //
+        async function instantiate(module, imports = {}) {
+            const adaptedImports = {
+                env: Object.assign(Object.create(globalThis), imports.env || {}, 
+                {
+                    abort(message, fileName, lineNumber, columnNumber) {
+                        // ~lib/builtins/abort(~lib/string/String | null?, ~lib/string/String | null?, u32?, u32?) => void
+                        message = __liftString(message >>> 0);
+                        fileName = __liftString(fileName >>> 0);
+                        lineNumber = lineNumber >>> 0;
+                        columnNumber = columnNumber >>> 0;
+                        (() => {
+                        // @external.js
+                        throw Error(`${message} in ${fileName}:${lineNumber}:${columnNumber}`);
+                        })();
+                    },
+                }),
+            };
+            const { exports } = await WebAssembly.instantiate(module, adaptedImports);
+            const memory = exports.memory || imports.env.memory;
+            const adaptedExports = Object.setPrototypeOf({
+                alloc(size) {
+                    return exports.alloc(size) >>> 0;
+                },
+            }, exports);
+            function __liftString(pointer) {
+                if (!pointer) return null;
+                const end = pointer + new Uint32Array(memory.buffer)[pointer - 4 >>> 2] >>> 1, memoryU16 = new Uint16Array(memory.buffer);
+                let start = pointer >>> 1, string = "";
+                while (end - start > 1024) string += String.fromCharCode(...memoryU16.subarray(start, start += 1024));
+                return string + String.fromCharCode(...memoryU16.subarray(start, end));
+            }
+            return adaptedExports;
+        }
+        const _module = await (async url => instantiate(await (async () => {
+                try { return await globalThis.WebAssembly.compileStreaming(globalThis.fetch(url)); }
+                catch { return globalThis.WebAssembly.compile(await (await import("node:fs/promises")).readFile(url)); }
+            })(), {
+                env: {
+                    getPixelPack: (x,y,w,h)=>{ return this.getPixelPack(x,y,w,h); }
+                }
+            }
+        ))(new URL("build/release.wasm", import.meta.url));
+        this._module = _module;
+        
+        //
         this._header = new Uint8Array([ // TODO: encode as UINT32
             0x42, 0x4d,             // (0) BM
             0x00, 0x00, 0x00, 0x00, // (2) total length
@@ -41,6 +88,7 @@ export class Blazer {
         //
         this.fileLength = 122 + pixelArraySize;
         this._from = this._module.alloc(this.fileLength+2)+2;
+        this._payload = this._module.alloc(w);
         new Uint8Array(this._module.memory.buffer, this._from, 122).set(this._header);
 
         //
@@ -51,15 +99,15 @@ export class Blazer {
         _view.setUint32(34, pixelArraySize, true);
 
         //
+        this.getPixelPack = (x,y,w,h)=>{ new Uint32Array(this._module.memory.buffer, this._payload, w*h).set(new Uint32Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return this._payload; };
+
+        //
         return this;
     }
 
     // for real-time animations support
-    record(encodeARGB=true) {
-        let idata = this.ctx.getImageData(0, 0, this.w, this.h);
-        let _idat = this._from + 122;
-        new Uint32Array(this._module.memory.buffer, _idat, idata.data.length>>2).set(new Uint32Array(idata.data.buffer));
-        if (encodeARGB) this._module.makeARGB(_idat, this.w, this.h);
+    record() {
+        this._module.makeARGB(this._from + 122, this.w, this.h);
         return new Blob([new Uint8Array(this._module.memory.buffer, this._from, this.fileLength)], {type: "image/bmp"});
     }
 }

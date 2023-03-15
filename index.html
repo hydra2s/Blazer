@@ -38,17 +38,21 @@
 
         //
         let canvas = new OffscreenCanvas(512, 512);
-        let ctx = canvas.getContext("2d");
+        let ctx = canvas.getContext("2d", { willReadFrequently: true });
         ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
         ctx.fillRect(64, 64, 128, 128);
 
         //
         let blazer = (await new Blazer().init()).context(ctx, canvas.width, canvas.height);
-        console.time("How fast to encoding BMP?");
+
+
+        console.time("FastBMP");
         let blob = blazer.record();
+        console.timeEnd("FastBMP");
+        
         
         let image = await loadImage(URL.createObjectURL(blob));
-        console.timeEnd("How fast to encoding BMP?");
+        
         
         
 
