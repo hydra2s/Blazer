@@ -1,24 +1,3 @@
-class FileWriter {
-    constructor(memory, offset, size) {
-        this.offset = 0;
-        this.view = new DataView(memory, offset, size);
-    }
-
-    set16(data) {
-        this.view.setUint16(this.offset, data, true);
-        this.offset += 2
-    }
-
-    set32(data) {
-        this.view.setUint32(this.offset, data, true);
-        this.offset += 4
-    }
-
-    seek(delta) {
-        this.offset += delta;
-    }
-}
-
 export class Blazer {
     constructor(imageData) {
         
