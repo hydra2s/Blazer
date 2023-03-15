@@ -21,7 +21,6 @@ export class Blazer {
         let _id32 = new Uint32Array(idata.data.buffer);
         let _pt32 = new Uint32Array(_module.memory.buffer, _from + 122, idata.data.length>>2); _pt32.set(_id32);
         //new Uint8Array(_module.memory.buffer, _from + 122, idata.data.length).set(idata.data);
-          let writer = new FileWriter(_module.memory.buffer, _from, fileLength);
         const header = new Uint8Array([ // TODO: encode as UINT32
             0x42, 0x4d,             // (0) BM
             0x00, 0x00, 0x00, 0x00, // (2) total length
@@ -46,7 +45,7 @@ export class Blazer {
 
         //
         let _view = new DataView(header.buffer);
-        _view.setUint32(2, writer.view.byteLength, true);
+        _view.setUint32(2, fileLength, true);
         _view.setUint32(18, w, true);
         _view.setUint32(22, -h >>> 0, true);
         _view.setUint32(34, pixelArraySize, true);
