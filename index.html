@@ -3,12 +3,15 @@
     <title>WebGPU tester</title>
     <!--<script src="pako/pako_deflate.js"></script>-->
     <!--<script src="UPNG.js"></script>-->
+    <script src="https://cdn.sheetjs.com/crc-32-latest/package/crc32.js"></script>
+    <script src="https://cdn.sheetjs.com/crc-32-latest/package/crc32c.js"></script>
+    <script src="adler32.js"></script>
     <script type="module" src="./blazer.js"></script>
 </head>
 <body>
 
     <script type="module">
-        import {Blazer} from "./blazer.js";
+        import {BlazerBMP, BlazerPNG} from "./blazer.js";
 
         (async()=>{
 
@@ -43,16 +46,16 @@
         ctx.fillRect(64, 64, 128, 128);
 
         //
-        let blazer = (await new Blazer().init()).context(ctx, canvas.width, canvas.height);
+        let blazer = (await new BlazerBMP().init()).context(ctx, canvas.width, canvas.height);
 
 
+        
+        let blob = blazer.encode();
+        
+        
         console.time("FastBMP");
-        let blob = blazer.record();
-        console.timeEnd("FastBMP");
-        
-        
         let image = await loadImage(URL.createObjectURL(blob));
-        
+        console.timeEnd("FastBMP");
         
         
 
