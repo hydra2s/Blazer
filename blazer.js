@@ -1,5 +1,3 @@
-import * as _module from "./build/release.js";
-
 class FileWriter {
     constructor(memory, offset, size) {
         this.offset = 0;
@@ -38,10 +36,13 @@ export class Blazer {
             fileLength     = 122 + pixelArraySize;
 
         //
-        //let _module = this._module;
-        let _from = _module.alloc(fileLength);
+        let _module = this._module;
+        let _from = _module.alloc(fileLength+2)+2;
         let _idat = _from + 122;
-        new Uint8Array(_module.memory.buffer, _from + 122, idata.data.length).set(idata.data);
+        let _id32 = new Uint32Array(idata.data.buffer);
+        let _pt32 = new Uint32Array(_module.memory.buffer, _from + 122, idata.data.length>>2);
+        _pt32.set(_id32);
+        //new Uint8Array(_module.memory.buffer, _from + 122, idata.data.length).set(idata.data);
         let writer = new FileWriter(_module.memory.buffer, _from, fileLength);
 
         // Header
