@@ -45,7 +45,7 @@ export class BlazerBMP {
                 catch { return globalThis.WebAssembly.compile(await (await import("node:fs/promises")).readFile(url)); }
             })(), {
                 env: {
-                    getPixelPack: (x,y,w,h)=>{ return this.getPixelPack(x,y,w,h); }
+                    getPixelPack: (x,y,w,h,P)=>{ return this.getPixelPack(x,y,w,h,P); }
                 }
             }
         ))(new URL("build/release.wasm", import.meta.url));
@@ -88,7 +88,6 @@ export class BlazerBMP {
         //
         this.fileLength = 122 + pixelArraySize;
         this._from = this._module.alloc(this.fileLength+2)+2;
-        this._payload = this._module.alloc(w);
         new Uint8Array(this._module.memory.buffer, this._from, 122).set(this._header);
 
         //
@@ -99,7 +98,7 @@ export class BlazerBMP {
         _view.setUint32(34, pixelArraySize, true);
 
         //
-        this.getPixelPack = (x,y,w,h)=>{ new Uint32Array(this._module.memory.buffer, this._payload, w*h).set(new Uint32Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return this._payload; };
+        this.getPixelPack = (x,y,w,h,P)=>{ new Uint32Array(this._module.memory.buffer, P, w*h).set(new Uint32Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return P; };
 
         //
         return this;
@@ -116,54 +115,22 @@ export class BlazerBMP {
 
 // 
 class PNGChunk {
-    constructor() {
+    constructor(slice,name="IEND",length=0) {
         this.data = null;
         this.view = null;
-        this.length = 0;
+        this.length = length;
+        this.name = name;
+        this.slice = slice;
         this.crc32 = 0;
-        this.name = "";
-        this.slice = null;
     }
 
     compile() {
         var view = new DataView(this.slice.buffer, this.slice.byteOffset, this.length+4+4+4);
-        view.setUint32(0, /*view.byteLength-4-4-4*/this.length, false);
-        view.setUint8(4, this.name.charCodeAt(0));
-        view.setUint8(5, this.name.charCodeAt(1));
-        view.setUint8(6, this.name.charCodeAt(2));
-        view.setUint8(7, this.name.charCodeAt(3));
+        view.setUint32(0, this.length, false);
+        view.setUint32(4, this.name.charCodeAt(0) | (this.name.charCodeAt(1)<<8) | (this.name.charCodeAt(2)<<16) | (this.name.charCodeAt(3)<<24), true);
         view.setUint32(this.length+4+4, this.crc32 = CRC32.buf(new Uint8Array(this.slice.buffer, this.slice.byteOffset+4, this.length+4)), false);
         return this;
     }
-}
-
-
-//
-class IDATLine {
-    constructor(buffer, offset, stride, last, pack) {
-        this.view = new DataView(buffer, offset, (this.stride = stride)+6);
-        this.view.setUint8(0, last, false);
-        this.view.setUint16(1, (stride+1), true); this.view.setUint16(3, ~(stride+1), true);
-        this.view.setUint8(5, 0, false);
-        new Uint8Array(buffer, offset+6, stride).set(pack);
-        this.data = new Uint8Array(buffer, offset+5, stride+1);
-    }
-}
-
-//
-const is_div = (n, M) => { return n * M <= M - 1; };
-const adler32_buf = (bufs) => {
-    const REM = 65521;
-	let a = 1, b = 0;
-	//if(typeof seed === 'number') { a = seed & 0xFFFF; b = (seed >>> 16) & 0xFFFF; }
-    let I=0; for (let buf of bufs) {
-        let L = buf.length;
-        for(var i = 0; i < L;i++) {
-            a = (a+buf[i])%REM;
-            b = (b+a)%REM;
-        }
-    }
-	return ((b << 16) | a);
 }
 
 // NOT FASTEST YET!
@@ -214,7 +181,7 @@ export class BlazerPNG {
                 catch { return globalThis.WebAssembly.compile(await (await import("node:fs/promises")).readFile(url)); }
             })(), {
                 env: {
-                    getPixelPack: (x,y,w,h)=>{ return this.getPixelPack(x,y,w,h); }
+                    getPixelPack: (x,y,w,h,P)=>{ return this.getPixelPack(x,y,w,h,P); }
                 }
             }
         ))(new URL("build/release.wasm", import.meta.url));
@@ -244,47 +211,43 @@ export class BlazerPNG {
     encodeIDAT() {
         var IDAT = new PNGChunk();
         var SIZE = 2 + this.h * (6 + this.w*4) + 4;
-        var data = new ArrayBuffer(SIZE+4+4+4);
+        var data = this._module.alloc(SIZE+4+4+4);
         IDAT.length = SIZE;
         IDAT.name = "IDAT";
-        IDAT.data = new Uint8Array(data, 8, SIZE);
-        IDAT.view = new DataView(data, 8, SIZE);
-        IDAT.view.setUint8(0, 0x78, false);
-        IDAT.view.setUint8(1, 1, false);
-        let lines = [];
-        for (let Y=0;Y<this.h;Y++) {
-            lines.push(new IDATLine(IDAT.data.buffer, 8+2+(this.w*4+6)*Y, this.w*4, Y==this.h-1, this.ctx.getImageData(0,Y,this.w,1).data));
-        }
-        IDAT.view.setUint32(SIZE-4, adler32_buf(lines.map((L)=>L.data)), false);
-        IDAT.slice = new Uint8Array(data);
+        IDAT.data = new Uint8Array(this._module.memory.buffer, data+8, SIZE);
+        IDAT.view = new DataView(this._module.memory.buffer, data+8, SIZE);
+        IDAT.view.setUint16(0, 0x7801, false);
+
+        //
+        this._module.makePNGData(data+8+2,this.w,this.h);
+
+        //
+        IDAT.slice = new Uint8Array(this._module.memory.buffer, data, SIZE+4+4+4);
         this.chunks.push(IDAT.compile());
         return this;
     }
 
     encodeIHDR() {
         var IHDR = new PNGChunk();
-        var data = new ArrayBuffer(13+4+4+4);
+        var data = this._module.alloc(13+4+4+4);
         IHDR.length = 13;
         IHDR.name = "IHDR";
-        IHDR.data = new Uint8Array(data, 8, 13);
-        IHDR.view = new DataView(data, 8, 13);
+        IHDR.data = new Uint8Array(this._module.memory.buffer, data+8, 13);
+        IHDR.view = new DataView(this._module.memory.buffer, data+8, 13);
         IHDR.view.setUint32(0, this.w, false);
         IHDR.view.setUint32(4, this.h, false);
-        IHDR.view.setUint8(8, 8, false);
-        IHDR.view.setUint8(9, 6, false);
-        IHDR.view.setUint8(10, 0, false);
-        IHDR.view.setUint8(11, 0, false);
+        IHDR.view.setUint32(8, 0x08060000, false);
         IHDR.view.setUint8(12, 0, false);
-        IHDR.slice = new Uint8Array(data);
+        IHDR.slice = new Uint8Array(this._module.memory.buffer, data, 13+4+4+4);
         this.chunks.splice(0, 0, IHDR.compile());
         return this;
     }
 
     encodeIEND() {
         var IEND = new PNGChunk();
-        var data = new ArrayBuffer(0+4+4+4);
+        var data = this._module.alloc(0+4+4+4);
         IEND.length = 0;
-        IEND.slice = new Uint8Array(data);
+        IEND.slice = new Uint8Array(this._module.memory.buffer, data, 0+4+4+4);
         IEND.name = "IEND";
         this.chunks.push(IEND.compile());
         return this;
@@ -312,7 +275,7 @@ export class BlazerPNG {
         this.ctx = ctx, this.w = w, this.h = h;
 
         //
-        this.getPixelPack = (x,y,w,h)=>{ new Uint32Array(this._module.memory.buffer, this._payload, w*h).set(new Uint32Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return this._payload; };
+        this.getPixelPack = (x,y,w,h,P)=>{ new Uint8Array(this._module.memory.buffer, P, w*h*4).set(new Uint8Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return P; };
 
         //
         return this;
@@ -1051,13 +1014,16 @@ export class OpenJNG {
                 
                 //
                 this.blazer.context(ctx, canvas.width, canvas.height);
+                //console.time("BlazePNG");
                 let blob = this.blazer.encode(this.reader.chunks.filter((C)=>C.name!="JHDR"&&C.name!="JDAA"&&C.name!="JDAT"&&C.name!="JdAA"&&C.name!="IDAT"));
+                //console.timeEnd("BlazePNG");
+                
                 return await loadImage(URL.createObjectURL(blob));
             }
             
             //
-            /*
-            console.time("NativePNG");
+            
+            /*console.time("NativePNG");
             const blob = await (canvas.convertToBlob || canvas.toBlob).call(canvas, {type: "image/png", quality: 0});
             console.timeEnd("NativePNG");
             const FR = new FileReader();

@@ -1,33 +1,38 @@
 import { getPixelPack } from "./env"
 
 export function makeARGB(fileData: usize, width: u32, height: u32): void {
-  let size: u32 = (width*height)<<2;
-  //for (let I:u32=0;I<size;I+=16) {
+  let W: u32 = width*4;
   for (let Y:u32=0;Y<height;Y++) {
-    let pack: usize = getPixelPack(0,Y,width,1);
-    for (let X:u32=0;X<width;X+=4) {
-      let u8x4x4: v128 = v128.load(pack+(X<<2));
-      //u8x4x4 = v128.swizzle(u8x4x4, i8x16(2,1,0,3, 6,5,4,7, 10,9,8,11, 14,13,12,15));
-      u8x4x4 = v128.swizzle(u8x4x4, i8x16(3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14));
-      v128.store(fileData+((X+Y*width)<<2), u8x4x4);
+    let P: usize = getPixelPack(0,Y,width,1,fileData+Y*W);
+    for (let X:u32=0;X<W;X+=16) {
+      let pX: usize = P+X;
+      v128.store(pX, v128.swizzle(v128.load(pX), i8x16(3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14)));
     }
   }
-  //}
 }
 
-export function makePNGData(fileData: usize, width: u32, height: u32) {
-  let size: u32 = (width*height)<<2;
-  //for (let I:u32=0;I<size;I+=16) {
+export function makePNGData(fileData: usize, width: u32, height: u32): void {
+  let W: u32 = width*4;
+  let a: u16 = 1, b: u32 = 0;
+  const REM: u16 = 65521;
   for (let Y:u32=0;Y<height;Y++) {
-    let pack: usize = getPixelPack(0,Y,width,1);
-    store<u8>(fileData+((width<<2)+1)*Y, 0);
-    for (let X:u32=0;X<width;X+=4) {
-      let u8x4x4: v128 = v128.load(pack+(X<<2));
-      //u8x4x4 = v128.swizzle(u8x4x4, i8x16(2,1,0,3, 6,5,4,7, 10,9,8,11, 14,13,12,15));
-      //u8x4x4 = v128.swizzle(u8x4x4, i8x16(3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14));
-      v128.store(fileData+((width<<2)+1)*Y+1+X, u8x4x4);
+    let P: usize = fileData+Y*(W+6); 
+    store<u8>(0+P, Y==height-1?1:0);
+    store<u16>(1+P, (W+1));
+    store<u16>(3+P, ~(W+1));
+
+    // lane with filter 0
+    store<u8>(5+P, 0); getPixelPack(0,Y,width,1,6+P);
+
+    // TODO: ADLER MAKER!
+    for (let X:u32=0;X<(W+1);X+=1) {
+      a = (a+load<u8>(5+P+X))%REM;
+      b = (b + a)%REM;
+      //let pX: usize = P+X;
+      //v128.store(pX, v128.swizzle(v128.load(pX), i8x16(3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14)));
     }
   }
+  store<u32>(height*(W+6), ((b << 16) | a));
 }
 
 export function alloc(size: u32): usize {
