@@ -1,6 +1,6 @@
 # Blazer
 
-Blazer - new BMP encoder with much more faster BGRA encoding...
+Blazer - new BMP encoder with much more faster ARGB encoding...
 
 # OpenJNG
 
