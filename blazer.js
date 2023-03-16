@@ -150,6 +150,21 @@ class IDATLine {
     }
 }
 
+//
+const is_div = (n, M) => { return n * M <= M - 1; };
+const adler32_buf = (bufs) => {
+    const REM = 65521;
+	let a = 1, b = 0;
+	//if(typeof seed === 'number') { a = seed & 0xFFFF; b = (seed >>> 16) & 0xFFFF; }
+    let I=0; for (let buf of bufs) {
+        let L = buf.length;
+        for(var i = 0; i < L;i++) {
+            a = (a+buf[i])%REM;
+            b = (b+a)%REM;
+        }
+    }
+	return ((b << 16) | a);
+}
 
 // NOT FASTEST YET!
 export class BlazerPNG {
@@ -240,7 +255,7 @@ export class BlazerPNG {
         for (let Y=0;Y<this.h;Y++) {
             lines.push(new IDATLine(IDAT.data.buffer, 8+2+(this.w*4+6)*Y, this.w*4, Y==this.h-1, this.ctx.getImageData(0,Y,this.w,1).data));
         }
-        IDAT.view.setUint32(SIZE-4, ADLER32.buf(this.concat(Uint8Array, ...lines.map((L)=>L.data))), false);
+        IDAT.view.setUint32(SIZE-4, adler32_buf(lines.map((L)=>L.data)), false);
         IDAT.slice = new Uint8Array(data);
         this.chunks.push(IDAT.compile());
         return this;
@@ -278,13 +293,16 @@ export class BlazerPNG {
     encode(chunks) {
         this.chunks = [...(chunks||[])].filter((C)=>{ return C.name != "IHDR" && C.name != "IDAT" && C.name != "IEND"; });
         
-        //
+        // TODO: store IDAT for recoding
         this.encodeIHDR();
         this.encodeIDAT();
         this.encodeIEND();
-
+        
         //
         chunks = this.chunks; this.chunks = [];
+
+        //
+        //chunks = this.chunks; this.chunks = [];
         return new Blob([this.PNGsignature, ...chunks.map((chunk)=>{
             return chunk.slice;
         })], {type: "image/png"});
@@ -1006,7 +1024,7 @@ export class OpenJNG {
                     //this.compositor = new Compositor().init();
                 //}
                 //canvas = await (await this.compositor).composite(this.header.width, this.header.height, await this.RGB, await this.A);
-                await new Promise(requestAnimationFrame);
+                //await new Promise(requestAnimationFrame);
 
                 // kill almost instantly
                 IMAGE = loadImage(encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -1039,7 +1057,9 @@ export class OpenJNG {
             
             //
             /*
+            console.time("NativePNG");
             const blob = await (canvas.convertToBlob || canvas.toBlob).call(canvas, {type: "image/png", quality: 0});
+            console.timeEnd("NativePNG");
             const FR = new FileReader();
             FR.readAsArrayBuffer(blob);
             const READ = new Promise(resolve => {
