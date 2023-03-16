@@ -735,14 +735,11 @@ class DataReader {
 //
 let loadImage = async (url) => {
     let image = new Image();
-    let promise = new Promise((resolve, reject) => {
-        image.onload = ()=>{ resolve(image); };
-        image.onerror = (e) => { reject(e); };
-    });
     image.decoding = "async";
-    image.importance = "high";
+    image.fetchPriority = "high";
     image.loading = "eager";
     image.src = await url;
+    await image.decode();
 
     // FOR DEBUG!
     /*
@@ -753,7 +750,7 @@ let loadImage = async (url) => {
     */
 
     //
-    return promise;
+    return image;
 }
 
 //
