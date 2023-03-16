@@ -1,120 +1,4 @@
-export class BlazerBMP {
-    constructor(imageData) {
-        
-    }
 
-    async init() {
-        this.getPixelPack = ()=>{ return 0; };
-
-        //
-        async function instantiate(module, imports = {}) {
-            const adaptedImports = {
-                env: Object.assign(Object.create(globalThis), imports.env || {}, 
-                {
-                    abort(message, fileName, lineNumber, columnNumber) {
-                        // ~lib/builtins/abort(~lib/string/String | null?, ~lib/string/String | null?, u32?, u32?) => void
-                        message = __liftString(message >>> 0);
-                        fileName = __liftString(fileName >>> 0);
-                        lineNumber = lineNumber >>> 0;
-                        columnNumber = columnNumber >>> 0;
-                        (() => {
-                        // @external.js
-                        throw Error(`${message} in ${fileName}:${lineNumber}:${columnNumber}`);
-                        })();
-                    },
-                }),
-            };
-            const { exports } = await WebAssembly.instantiate(module, adaptedImports);
-            const memory = exports.memory || imports.env.memory;
-            const adaptedExports = Object.setPrototypeOf({
-                alloc(size) {
-                    return exports.alloc(size) >>> 0;
-                },
-            }, exports);
-            function __liftString(pointer) {
-                if (!pointer) return null;
-                const end = pointer + new Uint32Array(memory.buffer)[pointer - 4 >>> 2] >>> 1, memoryU16 = new Uint16Array(memory.buffer);
-                let start = pointer >>> 1, string = "";
-                while (end - start > 1024) string += String.fromCharCode(...memoryU16.subarray(start, start += 1024));
-                return string + String.fromCharCode(...memoryU16.subarray(start, end));
-            }
-            return adaptedExports;
-        }
-        const _module = await (async url => instantiate(await (async () => {
-                try { return await globalThis.WebAssembly.compileStreaming(globalThis.fetch(url)); }
-                catch { return globalThis.WebAssembly.compile(await (await import("node:fs/promises")).readFile(url)); }
-            })(), {
-                env: {
-                    getPixelPack: (x,y,w,h)=>{ return this.getPixelPack(x,y,w,h); }
-                }
-            }
-        ))(new URL("build/release.wasm", import.meta.url));
-        this._module = _module;
-        
-        //
-        this._header = new Uint8Array([ // TODO: encode as UINT32
-            0x42, 0x4d,             // (0) BM
-            0x00, 0x00, 0x00, 0x00, // (2) total length
-            0x00, 0x00, 0x00, 0x00, // (6) skip unused fields
-            0x7a, 0x00, 0x00, 0x00, // (10) offset to pixels
-            0x6c, 0x00, 0x00, 0x00, // (14) header size (108)
-            0x00, 0x00, 0x00, 0x00, // (18) width
-            0x00, 0x00, 0x00, 0x00, // (22) height
-            1, 0x00,   32, 0x00, // (26) 1 plane, 32-bits (RGBA)
-            3, 0x00, 0x00, 0x00, // (30) no compression (BI_BITFIELDS, 3)
-            0x00, 0x00, 0x00, 0x00, // (34) bitmap size incl. padding (stride x height)
-            0x13, 0xB , 0x00, 0x00, // (38) pixels/meter h (~72 DPI x 39.3701 inch/m)
-            0x13, 0xB , 0x00, 0x00, // (42) pixels/meter v
-            0x00, 0x00, 0x00, 0x00, // (46) skip color/important colors
-            0x00, 0x00, 0x00, 0x00, // (50) skip color/important colors
-            0x00, 0xFF, 0x00, 0x00, // (54) red channel mask
-            0x00, 0x00, 0xFF, 0x00, // (60) green channel mask
-            0x00, 0x00, 0x00, 0xFF, // (64) blue channel mask
-            0xFF, 0x00, 0x00, 0x00, // (66) alpha channel mask
-            //0xFF, 0x00, 0x00, 0x00, // (54) red channel mask
-            //0x00, 0xFF, 0x00, 0x00, // (60) green channel mask
-            //0x00, 0x00, 0xFF, 0x00, // (64) blue channel mask
-            //0x00, 0x00, 0x00, 0xFF, // (66) alpha channel mask
-            0x20, 0x6e, 0x69, 0x57  // (70) " win" color space
-        ]);
-        return this;
-    }
-
-    context(ctx, w, h) {
-        this.ctx = ctx, this.w = w, this.h = h;
-        let stride         = ((32 * w + 31) / 32) << 2,
-            pixelArraySize = stride * h;
-
-        //
-        this.fileLength = 122 + pixelArraySize;
-        this._from = this._module.alloc(this.fileLength+2)+2;
-        this._payload = this._module.alloc(w);
-        new Uint8Array(this._module.memory.buffer, this._from, 122).set(this._header);
-
-        //
-        let _view = new DataView(this._module.memory.buffer, this._from, 122);
-        _view.setUint32(2, this.fileLength, true);
-        _view.setUint32(18, w, true);
-        _view.setUint32(22, -h >>> 0, true);
-        _view.setUint32(34, pixelArraySize, true);
-
-        //
-        this.getPixelPack = (x,y,w,h)=>{ new Uint32Array(this._module.memory.buffer, this._payload, w*h).set(new Uint32Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return this._payload; };
-
-        //
-        return this;
-    }
-
-    // for real-time animations support
-    encode() {
-        this._module.makeARGB(this._from + 122, this.w, this.h);
-        return new Blob([new Uint8Array(this._module.memory.buffer, this._from, this.fileLength)], {type: "image/bmp"});
-    }
-}
-
-
-
-// 
 class PNGChunk {
     constructor() {
         this.data = null;
@@ -137,6 +21,126 @@ class PNGChunk {
     }
 }
 
+class DataReader {
+    constructor(data) {
+        this.data = data;
+        this.offset = 0;
+        this.chunks = [];
+        this.signature = null;
+        this.chunk = null;
+    }
+    
+    readSignature() {
+        this.signature = new Uint8Array(this.data, this.offset, 8);
+        this.offset += 8;
+        this.chunk = new PNGChunk();
+    }
+
+    readLength() {
+        this.chunk.length = new DataView(this.data, this.offset, 4).getUint32(0, false);
+        this.offset += 4;
+    }
+
+    readName() {
+        this.chunk.name = new TextDecoder().decode(new Uint8Array(this.data, this.offset, 4));
+        this.offset += 4;
+    }
+
+    readCRC() {
+        this.chunk.crc32 = new DataView(this.data, this.offset, 4).getUint32(0, false);
+        this.offset += 4;
+    }
+
+    readData() {
+        this.chunk.data = new Uint8Array(this.data, this.offset, this.chunk.length);
+        this.chunk.view = new DataView(this.data, this.offset, this.chunk.length);
+        this.offset += this.chunk.length;
+    }
+
+    makeSlice() {
+        this.chunks.push(this.chunk);
+        this.chunk.slice = new Uint8Array(this.data, this.offset-this.chunk.length-4-4-4, this.chunk.length+4+4+4);
+        this.chunk = new PNGChunk();
+    }
+}
+
+//
+let loadImage = async (url) => {
+    let image = new Image();
+    let promise = new Promise((resolve, reject) => {
+        image.onload = ()=>{ resolve(image); };
+        image.onerror = (e) => { reject(e); };
+    });
+    image.src = await url;
+
+    // FOR DEBUG!
+    /*
+    image.width = 160;
+    image.height = 120;
+    image.alt = "Problematic";
+    document.body.appendChild(image);
+    */
+
+    //
+    return promise;
+}
+
+//
+let saveBlob = (url, name) => {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href =  url;
+    a.download = name;
+    a.click();
+    a.remove();
+    return url;
+}
+
+//
+let concat = (resultConstructor, ...arrays) => {
+    let totalLength = 0;
+    for (let arr of arrays) {
+        totalLength += arr.length;
+    }
+    let result = new resultConstructor(totalLength);
+    let offset = 0;
+    for (let arr of arrays) {
+        result.set(arr, offset);
+        offset += arr.length;
+    }
+    return result;
+}
+
+//
+let encodeURL = async (chunked, type, blob = false) => {
+    chunked = chunked.map((chunk)=>{
+        if (typeof chunk === "string") {
+            return new TextEncoder().encode(chunk);
+        }
+        return chunk;
+    });
+
+    const BLOB = new Blob(chunked, {type});
+    if (blob) { return URL.createObjectURL(BLOB); };
+    {
+        const FR = new FileReader();
+        FR.readAsDataURL(BLOB);
+        const READ = new Promise(resolve => {
+            FR.onload = ()=>resolve(FR.result);
+        });
+        return await READ;
+    }
+
+    //return `data:${type};base64,${btoa(String.fromCharCode(...concat(Uint8Array, ...chunked)))}`;
+}
+
+//
+let toBlob = (canvas, mimeType, quality) => {
+    return new Promise((resolve, reject)=>{
+        canvas.toBlob(resolve, mimeType, quality);
+    });
+}
 
 //
 class IDATLine {
@@ -151,13 +155,14 @@ class IDATLine {
 }
 
 
-// NOT FASTEST YET!
-export class BlazerPNG {
+
+//
+class BlazerPNG {
     constructor() {
         
     }
 
-    async init() {
+    async init(chunks) {
         this.getPixelPack = ()=>{ return 0; };
 
         //
@@ -207,6 +212,11 @@ export class BlazerPNG {
         
         //
         this.PNGsignature = new Uint8Array([137,80,78,71,13,10,26,10]);
+        this.chunks = (this.ext = [...(chunks||[])]).filter((chunk)=>{
+            chunk.name != "IHDR" && 
+            chunk.name != "IDAT" && 
+            chunk.name != "IEND";
+        });
 
         //
         return this;
@@ -275,17 +285,13 @@ export class BlazerPNG {
         return this;
     }
 
-    encode(chunks) {
-        this.chunks = [...(chunks||[])].filter((C)=>{ return C.name != "IHDR" && C.name != "IDAT" && C.name != "IEND"; });
-        
-        //
+    encode() {
         this.encodeIHDR();
         this.encodeIDAT();
         this.encodeIEND();
 
         //
-        chunks = this.chunks; this.chunks = [];
-        return new Blob([this.PNGsignature, ...chunks.map((chunk)=>{
+        return new Blob([this.PNGsignature, ...this.chunks.map((chunk)=>{
             return chunk.slice;
         })], {type: "image/png"});
     }
@@ -301,10 +307,59 @@ export class BlazerPNG {
     }
 }
 
+// for JNG alpha channel
+class ReconstructPNG {
+    constructor(chunks, header) {
+        this.PNGsignature = new Uint8Array([137,80,78,71,13,10,26,10]);
+        this.chunks = chunks.filter((chunk)=>{
+            //chunk.name != "JHDR" && 
+            //chunk.name != "JDAT" && 
+            //chunk.name != "JDAA" && 
+            //chunk.name != "JEND"
+            return chunk.name == "IDAT";
+        });
+        this.header = header;
+    }
 
+    encodeIHDR() {
+        var IHDR = new PNGChunk();
+        var data = new ArrayBuffer(13+4+4+4);
+        IHDR.length = 13;
+        IHDR.name = "IHDR";
+        IHDR.data = new Uint8Array(data, 8, 13);
+        IHDR.view = new DataView(data, 8, 13);
+        IHDR.view.setUint32(0, this.header.width, false);
+        IHDR.view.setUint32(4, this.header.height, false);
+        IHDR.view.setUint8(8, this.header.bitDepth, false);
+        IHDR.view.setUint8(9, 0, false);
+        IHDR.view.setUint8(10, 0, false);
+        IHDR.view.setUint8(11, this.filter, false);
+        IHDR.view.setUint8(12, this.interlace, false);
+        IHDR.slice = new Uint8Array(data);
+        this.chunks.splice(0, 0, IHDR.compile());
+        return this;
+    }
 
-// UNUSED!
-export class Compositor {
+    encodeIEND() {
+        var IEND = new PNGChunk();
+        var data = new ArrayBuffer(0+4+4+4);
+        IEND.length = 0;
+        IEND.slice = new Uint8Array(data);
+        IEND.name = "IEND";
+        this.chunks.push(IEND.compile());
+        return this;
+    }
+
+    encode() {
+        this.encodeIHDR();
+        this.encodeIEND();
+        return loadImage(encodeURL([/*[this.concat(Uint8Array, JPEGc)]*/this.PNGsignature, ...this.chunks.map((chunk)=>{
+            return chunk.slice;
+        })], "image/png"));
+    }
+}
+
+class Compositor {
     constructor() {
         
     }
@@ -656,236 +711,7 @@ export class Compositor {
     }
 }
 
-
-
-
-// UNUSED!
-class InjectPNG {
-    constructor(chunks, header) {
-        // import ancilary data 
-        this.PNGsignature = new Uint8Array([137,80,78,71,13,10,26,10]);
-        this.chunks = chunks.filter((chunk)=>{ return chunk.name != "JHDR" && chunk.name != "JDAT" && chunk.name != "JDAA" && chunk.name != "JEND" && chunk.name != "IEND" && chunk.name != "IDAT";});
-        this.header = header;
-    }
-
-    inject() {
-        let IHDRi = this.reader.chunks.findIndex((chunk)=>{return chunk.name == "IHDR";});
-        //let IDATi = this.chunks.findIndex((chunk)=>{return chunk.name == "IDAT";});
-        this.reader.chunks.splice(IHDRi+1, 0, ...this.chunks);
-        return this;
-    }
-
-    recode(binPNG) {
-        this.reader = new DataReader(binPNG);
-        this.reader.readSignature();
-        this.PNGsignature = new Uint8Array([137,80,78,71,13,10,26,10]);
-        while (this.reader.offset < this.reader.data.byteLength) {
-            this.reader.readLength();
-            this.reader.readName();
-            this.reader.readData();
-            this.reader.readCRC();
-            this.reader.makeSlice();
-        }
-
-        // TODO: separate chunks
-        this.reader.chunks = this.reader.chunks.filter((chunk)=>{
-            return chunk.name == "IHDR" || chunk.name == "IDAT" || chunk.name == "IEND";
-        });
-        this.inject();
-        
-        //
-        return loadImage(encodeURL([this.PNGsignature, ...this.reader.chunks.map((chunk)=>{
-            return chunk.slice;
-        })], "image/png", true));
-    }
-
-    encode(pixelData) {
-        // make operation much faster
-        return this.recode(UPNG.encode([pixelData], this.header.width, this.header.height, 0));
-    }
-}
-
-
-
-
-class DataReader {
-    constructor(data) {
-        this.data = data;
-        this.offset = 0;
-        this.chunks = [];
-        this.signature = null;
-        this.chunk = null;
-    }
-    
-    readSignature() {
-        this.signature = new Uint8Array(this.data, this.offset, 8);
-        this.offset += 8;
-        this.chunk = new PNGChunk();
-    }
-
-    readLength() {
-        this.chunk.length = new DataView(this.data, this.offset, 4).getUint32(0, false);
-        this.offset += 4;
-    }
-
-    readName() {
-        this.chunk.name = new TextDecoder().decode(new Uint8Array(this.data, this.offset, 4));
-        this.offset += 4;
-    }
-
-    readCRC() {
-        this.chunk.crc32 = new DataView(this.data, this.offset, 4).getUint32(0, false);
-        this.offset += 4;
-    }
-
-    readData() {
-        this.chunk.data = new Uint8Array(this.data, this.offset, this.chunk.length);
-        this.chunk.view = new DataView(this.data, this.offset, this.chunk.length);
-        this.offset += this.chunk.length;
-    }
-
-    makeSlice() {
-        this.chunks.push(this.chunk);
-        this.chunk.slice = new Uint8Array(this.data, this.offset-this.chunk.length-4-4-4, this.chunk.length+4+4+4);
-        this.chunk = new PNGChunk();
-    }
-}
-
-//
-let loadImage = async (url) => {
-    let image = new Image();
-    let promise = new Promise((resolve, reject) => {
-        image.onload = ()=>{ resolve(image); };
-        image.onerror = (e) => { reject(e); };
-    });
-    image.decoding = "async";
-    image.importance = "high";
-    image.loading = "eager";
-    image.src = await url;
-
-    // FOR DEBUG!
-    /*
-    image.width = 160;
-    image.height = 120;
-    image.alt = "Problematic";
-    document.body.appendChild(image);
-    */
-
-    //
-    return promise;
-}
-
-//
-let saveBlob = (url, name) => {
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style = "display: none";
-    a.href =  url;
-    a.download = name;
-    a.click();
-    a.remove();
-    return url;
-}
-
-//
-let concat = (resultConstructor, ...arrays) => {
-    let totalLength = 0;
-    for (let arr of arrays) {
-        totalLength += arr.length;
-    }
-    let result = new resultConstructor(totalLength);
-    let offset = 0;
-    for (let arr of arrays) {
-        result.set(arr, offset);
-        offset += arr.length;
-    }
-    return result;
-}
-
-//
-let encodeURL = async (chunked, type, blob = false) => {
-    chunked = chunked.map((chunk)=>{
-        if (typeof chunk === "string") {
-            return new TextEncoder().encode(chunk);
-        }
-        return chunk;
-    });
-
-    const BLOB = new Blob(chunked, {type});
-    if (blob) { return URL.createObjectURL(BLOB); };
-    {
-        const FR = new FileReader();
-        FR.readAsDataURL(BLOB);
-        const READ = new Promise(resolve => {
-            FR.onload = ()=>resolve(FR.result);
-        });
-        return await READ;
-    }
-
-    //return `data:${type};base64,${btoa(String.fromCharCode(...concat(Uint8Array, ...chunked)))}`;
-}
-
-//
-let toBlob = (canvas, mimeType, quality) => {
-    return new Promise((resolve, reject)=>{
-        canvas.toBlob(resolve, mimeType, quality);
-    });
-}
-
-// for JNG alpha channel
-class ReconstructPNG {
-    constructor(chunks, header) {
-        this.PNGsignature = new Uint8Array([137,80,78,71,13,10,26,10]);
-        this.chunks = chunks.filter((chunk)=>{
-            //chunk.name != "JHDR" && 
-            //chunk.name != "JDAT" && 
-            //chunk.name != "JDAA" && 
-            //chunk.name != "JEND"
-            return chunk.name == "IDAT";
-        });
-        this.header = header;
-    }
-
-    encodeIHDR() {
-        var IHDR = new PNGChunk();
-        var data = new ArrayBuffer(13+4+4+4);
-        IHDR.length = 13;
-        IHDR.name = "IHDR";
-        IHDR.data = new Uint8Array(data, 8, 13);
-        IHDR.view = new DataView(data, 8, 13);
-        IHDR.view.setUint32(0, this.header.width, false);
-        IHDR.view.setUint32(4, this.header.height, false);
-        IHDR.view.setUint8(8, this.header.bitDepth, false);
-        IHDR.view.setUint8(9, 0, false);
-        IHDR.view.setUint8(10, 0, false);
-        IHDR.view.setUint8(11, this.filter, false);
-        IHDR.view.setUint8(12, this.interlace, false);
-        IHDR.slice = new Uint8Array(data);
-        this.chunks.splice(0, 0, IHDR.compile());
-        return this;
-    }
-
-    encodeIEND() {
-        var IEND = new PNGChunk();
-        var data = new ArrayBuffer(0+4+4+4);
-        IEND.length = 0;
-        IEND.slice = new Uint8Array(data);
-        IEND.name = "IEND";
-        this.chunks.push(IEND.compile());
-        return this;
-    }
-
-    encode() {
-        this.encodeIHDR();
-        this.encodeIEND();
-        return (encodeURL([/*[this.concat(Uint8Array, JPEGc)]*/this.PNGsignature, ...this.chunks.map((chunk)=>{
-            return chunk.slice;
-        })], "image/png"));
-    }
-}
-
-//
-export class OpenJNG {
+class OpenJNG {
     constructor() {
         this.JNGSignature = new Uint8Array([ 0x8b, 0x4a, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a ]);
         this.header = {
@@ -988,13 +814,13 @@ export class OpenJNG {
     async concatJDAT() {
         var JDATs = this.reader.chunks.filter((chunk)=>{return chunk.name == "JDAT";});
         var JPEGc = JDATs.map((chunk)=>{ return chunk.data; });
-        return (encodeURL(/*[this.concat(Uint8Array, JPEGc)]*/JPEGc, "image/jpeg"));
+        return loadImage(encodeURL(/*[this.concat(Uint8Array, JPEGc)]*/JPEGc, "image/jpeg"));
     }
 
     async concatJDAA() {
         var JDATs = this.reader.chunks.filter((chunk)=>{return chunk.name == "JDAA" || chunk.name == "JdAA";});
         var JPEGc = JDATs.map((chunk)=>{ return chunk.data; });
-        return (encodeURL(/*[this.concat(Uint8Array, JPEGc)]*/JPEGc, "image/jpeg"));
+        return loadImage(encodeURL(/*[this.concat(Uint8Array, JPEGc)]*/JPEGc, "image/jpeg"));
     }
 
     async recodePNG() {
@@ -1006,13 +832,16 @@ export class OpenJNG {
                     //this.compositor = new Compositor().init();
                 //}
                 //canvas = await (await this.compositor).composite(this.header.width, this.header.height, await this.RGB, await this.A);
+                
+                let RGB = await this.RGB;
+                let A = await this.A;
                 await new Promise(requestAnimationFrame);
 
                 // kill almost instantly
                 IMAGE = loadImage(encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
-                <defs><mask id="mask"><image xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
-                <image xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
+                <defs><mask id="mask"><image xlink:href="${A.src}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
+                <image xlink:href="${RGB.src}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
                 </svg>
                 `], `image/svg+xml`, true));
             } else {
@@ -1027,25 +856,25 @@ export class OpenJNG {
             
             {
                 canvas = new OffscreenCanvas(this.header.width, this.header.height);
-                var ctx = canvas.getContext("2d", { willReadFrequently: true });
+                var ctx = canvas.getContext("2d");
                     ctx.clearRect(0, 0, this.header.width, this.header.height);
                     ctx.drawImage(await IMAGE, 0, 0);
-                
-                //
                 this.blazer.context(ctx, canvas.width, canvas.height);
-                let blob = this.blazer.encode(this.reader.chunks.filter((C)=>C.name!="JHDR"&&C.name!="JDAA"&&C.name!="JDAT"&&C.name!="JdAA"&&C.name!="IDAT"));
+                let blob = blazer.encode(this.reader.chunks.filter((C)=>C.name!="JHDR"&&C.name!="JDAA"&&C.name!="JDAT"&&C.name!="JdAA"&&C.name!="IDAT"));
                 return await loadImage(URL.createObjectURL(blob));
             }
             
             //
-            /*
-            const blob = await (canvas.convertToBlob || canvas.toBlob).call(canvas, {type: "image/png", quality: 0});
-            const FR = new FileReader();
-            FR.readAsArrayBuffer(blob);
-            const READ = new Promise(resolve => {
-                FR.onload = ()=>resolve(FR.result);
-            });
-            return await new InjectPNG(this.reader.chunks, this.header).recode(await READ);*/
+            //console.time("FastPNG");
+            //const blob = await (canvas.convertToBlob || canvas.toBlob).call(canvas, {type: "image/png", quality: 1});
+            //console.timeEnd("FastPNG");
+            
+            //const FR = new FileReader();
+            //FR.readAsArrayBuffer(blob);
+            //const READ = new Promise(resolve => {
+                //FR.onload = ()=>resolve(FR.result);
+            //});
+            //return await new InjectPNG(this.reader.chunks, this.header).recode(await READ);
         }
         return null;
     }

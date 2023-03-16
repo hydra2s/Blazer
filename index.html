@@ -49,18 +49,12 @@
         let blazer = (await new BlazerBMP().init()).context(ctx, canvas.width, canvas.height);
 
 
-        
-        let blob = blazer.encode();
-        
-        
         console.time("FastBMP");
-        let image = await loadImage(URL.createObjectURL(blob));
+        let blob = blazer.encode();
         console.timeEnd("FastBMP");
         
         
-
-        //
-        document.body.appendChild(image);
+        document.body.appendChild(await loadImage(URL.createObjectURL(blob)));
 
     })();
     </script>
