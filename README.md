@@ -1,6 +1,19 @@
 # Blazer
 
-Blazer - new BMP encoder with much more faster ARGB encoding...
+Blazer - new BMP or PNG encoder with much more faster encoding...
+
+### Main idea?
+
+- **Support for Browsers and Web.**
+- Much more blazing fast encoding images.
+- Raw-like image formats (uncompressed).
+- Using WebAssembly and SIMD where is possible.
+- Using most fastest composition methods where possible.
+- Planned almost full Web Workers support.
+- Planned caching support (for OpenJNG or static mode).
+- Planned real-time image streaming support.
+- Don't using slow `setTimeout` methods.
+- Full support for `async` and `await`.
 
 # OpenJNG
 
