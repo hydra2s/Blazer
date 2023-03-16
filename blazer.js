@@ -977,25 +977,13 @@ export class OpenJNG {
 
     async recodePNG() {
         if (this.checkSignature()) {
-            let canvas = null;
-            let IMAGE = null;
-            if (this.A) {
-                //if (!this.compositor) {
-                    //this.compositor = new Compositor().init();
-                //}
-                //canvas = await (await this.compositor).composite(this.header.width, this.header.height, await this.RGB, await this.A);
-                //await new Promise(requestAnimationFrame);
-
-                // kill almost instantly
-                IMAGE = loadImage(encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            // kill almost instantly
+            let IMAGE = createImageBitmap(await loadImage(this.A ? encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
                 <svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
                 <defs><mask id="mask"><image xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
                 <image xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
                 </svg>
-                `], `image/svg+xml`, true));
-            } else {
-                IMAGE = this.RGB;
-            } //else 
+                `], `image/svg+xml;charset=utf-8`, true) : this.RGB));
             
             //
             if (!this.blazer) {
@@ -1004,7 +992,7 @@ export class OpenJNG {
             }
             
             {
-                canvas = new OffscreenCanvas(this.header.width, this.header.height);
+                let canvas = new OffscreenCanvas(this.header.width, this.header.height);
                 var ctx = canvas.getContext("2d", { willReadFrequently: true });
                     ctx.clearRect(0, 0, this.header.width, this.header.height);
                     ctx.drawImage(await IMAGE, 0, 0);
@@ -1015,7 +1003,7 @@ export class OpenJNG {
                 let blob = this.blazer.encode(this.reader.chunks.filter((C)=>C.name!="JHDR"&&C.name!="JDAA"&&C.name!="JDAT"&&C.name!="JdAA"&&C.name!="IDAT"));
                 //console.timeEnd("BlazePNG");
                 
-                return await loadImage(URL.createObjectURL(blob));
+                return loadImage(URL.createObjectURL(blob));
             }
             
             //

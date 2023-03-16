@@ -9,10 +9,8 @@
 </head>
 <body>
 
-    <script type="module">
+    <script type="module" async>
         import {BlazerBMP, BlazerPNG} from "./blazer.js";
-
-        (async()=>{
 
         //
         let loadImage = async (url) => {
@@ -51,8 +49,6 @@
         
         
         document.body.appendChild(await loadImage(URL.createObjectURL(blob)));
-
-    })();
     </script>
 </body>
 </html>
