@@ -978,23 +978,20 @@ export class OpenJNG {
     async recodePNG() {
         if (this.checkSignature()) {
             // kill almost instantly
-            let IMAGE = createImageBitmap(await loadImage(this.A ? encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-                <svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
-                <defs><mask id="mask"><image xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
-                <image xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
-                </svg>
-                `], `image/svg+xml;charset=utf-8`, true) : this.RGB));
+            let IMAGE = new Promise(async(R)=>R(await createImageBitmap(await loadImage(this.A ? encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
+<defs><mask id="mask"><image xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
+<image xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
+</svg>`], `image/svg+xml;charset=utf-8`, true) : this.RGB))));
             
             //
             if (!this.blazer) {
-                this.blazer = new BlazerPNG();
-                await this.blazer.init();
+                await (this.blazer = new BlazerPNG()).init();
             }
             
             {
                 let canvas = new OffscreenCanvas(this.header.width, this.header.height);
                 var ctx = canvas.getContext("2d", { willReadFrequently: true });
-                    ctx.clearRect(0, 0, this.header.width, this.header.height);
                     ctx.drawImage(await IMAGE, 0, 0);
                 
                 //
