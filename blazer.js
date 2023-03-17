@@ -764,8 +764,13 @@ let loadBitmapThroughput = async (url) => {
     if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
         return new Promise((R,E)=>{
             const single = (ev) => { self.removeEventListener('message', single); if (ev.id == id) { R(ev.data.svg); }; };
-            self.addEventListener('message', single);
-            self.postMessage({ id: uuidv4(), svg: "request", url });
+            self.addEventListener('message', single); let T = [];
+            if (url instanceof ArrayBuffer || 
+                url instanceof SharedArrayBuffer) 
+                { T.push([url]); }
+            // if are blob, make as URL
+            if (url instanceof Blob) { url = URL.createObjectURL(url); };
+            self.postMessage({ id: uuidv4(), svg: "request", url }, ...T);
         });
     } else {
         return createImageBitmap(await loadImage(url));
@@ -775,7 +780,8 @@ let loadBitmapThroughput = async (url) => {
 // needs interface for worker
 let provideForWorker = (worker) => {
     worker.addEventListener('message', async (ev) => {
-        worker.postMessage({id: ev.data.id, svg: await createImageBitmap(await loadImage(ev.data.url))});
+        let bitmap = await createImageBitmap(await loadImage(ev.data.url));
+        worker.postMessage({id: ev.data.id, svg: bitmap}, [bitmap]);
     });
 }
 
