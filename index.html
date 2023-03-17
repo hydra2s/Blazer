@@ -10,45 +10,30 @@
 <body>
 
     <script type="module" async>
-        import {BlazerBMP, BlazerPNG} from "./blazer.js";
-
-        // TODO: use library instead of
-        let loadImage = async (url) => {
-            let image = new Image();
-            image.decoding = "async";
-            image.fetchPriority = "high";
-            image.loading = "eager";
-            image.src = await url;
-            await image.decode();
-
-            // FOR DEBUG!
-            /*
-            image.width = 160;
-            image.height = 120;
-            image.alt = "Problematic";
-            document.body.appendChild(image);
-            */
-
-            //
-            return image;
-        }
-
+        import * as _module from "./blazer.js";
+        import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
+        
         //
-        let canvas = new OffscreenCanvas(512, 512);
-        let ctx = canvas.getContext("2d", { willReadFrequently: true });
+        //const _module = await Comlink.wrap(new Worker("wbmp.js", {type: "module"}));
+        
+        //
+        let canvas = await new OffscreenCanvas(512, 512);
+        let ctx = await canvas.getContext("2d", { willReadFrequently: true });
         ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
         ctx.fillRect(64, 64, 128, 128);
 
         //
-        let blazer = (await new BlazerBMP().init()).context(ctx, canvas.width, canvas.height);
+        const blazer = await new _module.BlazerBMP();
+        await blazer.init();
+        await blazer.context(ctx, await canvas.width, await canvas.height);
 
 
         console.time("FastBMP");
-        let blob = blazer.encode();
+        let blob = await blazer.encode();
         console.timeEnd("FastBMP");
         
         
-        document.body.appendChild(await loadImage(URL.createObjectURL(blob)));
+        document.body.appendChild(await _module.loadImage(blob));
     </script>
 </body>
 </html>
