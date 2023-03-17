@@ -211,7 +211,7 @@ export class BlazerPNG {
     encodeIDAT() {
         var IDAT = new PNGChunk();
         var SIZE = 2 + this.h * (6 + this.w*4) + 4;
-        var data = this._module.alloc(SIZE+4+4+4);
+        var data = this._module.alloc(Math.ceil((SIZE+4+4+4)/16)*16);
         IDAT.length = SIZE;
         IDAT.name = "IDAT";
         IDAT.data = new Uint8Array(this._module.memory.buffer, data+8, SIZE);
@@ -1001,8 +1001,9 @@ export class OpenJNG {
                 await (this.blazer = new BlazerPNG()).init();
             }
             
+            let canvas = null;
             {
-                let canvas = new OffscreenCanvas(this.header.width, this.header.height);
+                canvas = new OffscreenCanvas(this.header.width, this.header.height);
                 var ctx = canvas.getContext("2d", { willReadFrequently: true });
                     ctx.drawImage(await IMAGE, 0, 0);
                 
@@ -1011,12 +1012,10 @@ export class OpenJNG {
                 //console.time("BlazePNG");
                 let blob = this.blazer.encode(this.reader.chunks.filter((C)=>C.name!="JHDR"&&C.name!="JDAA"&&C.name!="JDAT"&&C.name!="JdAA"&&C.name!="IDAT"));
                 //console.timeEnd("BlazePNG");
-                
                 return loadImage(URL.createObjectURL(blob));
             }
             
             //
-            
             /*console.time("NativePNG");
             const blob = await (canvas.convertToBlob || canvas.toBlob).call(canvas, {type: "image/png", quality: 0});
             console.timeEnd("NativePNG");
