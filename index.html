@@ -3,34 +3,36 @@
     <title>WebGPU tester</title>
     <!--<script src="pako/pako_deflate.js"></script>-->
     <!--<script src="UPNG.js"></script>-->
-    <script src="https://cdn.sheetjs.com/crc-32-latest/package/crc32.js"></script>
-    <script src="https://cdn.sheetjs.com/crc-32-latest/package/crc32c.js"></script>
+    <script src="node_modules/crc-32/crc32.js"></script>
     <script type="module" src="./blazer.js"></script>
+
+    <meta http-equiv="origin-trial" content="AheTb7dTZtgoY8Fcsznx+0xlpDjy/teBncwVq9xG4xIf9qPWcZTOakvTzk/v7BtAeoL9xu7O87L57Lq7RhasZwgAAABeeyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNjg4MDgzMTk5fQ==">
 </head>
 <body>
 
     <script type="module" async>
-        import * as _module from "./blazer.js";
+        import {loadImage, getSharedImageData} from "./blazer.js";
         import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
         
         //
-        //const _module = await Comlink.wrap(new Worker("wbmp.js", {type: "module"}));
+        const _module = await Comlink.wrap(new Worker("wbmp.js", {type: "module"}));
         
         //
-        let canvas = await new OffscreenCanvas(512, 512);
-        let ctx = await canvas.getContext("2d", { willReadFrequently: true });
+        let canvas = new OffscreenCanvas(512, 512);
+        let ctx = canvas.getContext("2d", { willReadFrequently: true });
         ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
         ctx.fillRect(64, 64, 128, 128);
 
         //
+        const shared = getSharedImageData(ctx,0,0,canvas.width,canvas.height);
         const blazer = await new _module.BlazerBMP();
         await blazer.init();
-        await blazer.context(ctx, await canvas.width, await canvas.height);
+        await blazer.shared(shared, canvas.width, canvas.height);
 
 
-        console.time("FastBMP");
+        //console.time("FastBMP");
         let blob = await blazer.encode();
-        console.timeEnd("FastBMP");
+        //console.timeEnd("FastBMP");
         
         
         document.body.appendChild(await _module.loadImage(blob));

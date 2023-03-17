@@ -4,7 +4,7 @@
   "description": "Getting BMP image fast as possible",
   "main": "blazer.js",
   "scripts": {
-    "test": "node tests",
+    "test": "node test.js",
     "asbuild:debug": "asc assembly/index.ts --initialMemory 256  --runtime minimal  --maximumMemory unlimited --enable simd --enable relaxed-simd -Ospeed --optimizeLevel 3  --target debug",
     "asbuild:release": "asc assembly/index.ts --initialMemory 256  --runtime minimal --maximumMemory unlimited --enable simd --enable relaxed-simd  -Ospeed --optimizeLevel 3 --target release",
     "asbuild": "npm run asbuild:debug && npm run asbuild:release",
@@ -18,7 +18,8 @@
   "author": "hydra2s",
   "license": "MIT",
   "devDependencies": {
-    "assemblyscript": "^0.27.1"
+    "assemblyscript": "^0.27.1",
+    "vite-plugin-cross-origin-isolation": "^0.1.6"
   },
   "type": "module",
   "exports": {
@@ -28,6 +29,10 @@
     }
   },
   "dependencies": {
-    "comlink": "^4.4.1"
+    "comlink": "^4.4.1",
+    "crc-32": "^1.2.2",
+    "jsox": "^1.2.118",
+    "vite": "^4.2.0",
+    "ws": "^8.13.0"
   }
 }
