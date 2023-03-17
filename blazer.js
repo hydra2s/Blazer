@@ -862,6 +862,18 @@ class ReconstructPNG {
     }
 }
 
+const encodeSvg = (svgString) => {
+    return svgString.replace('<svg',(~svgString.indexOf('xmlns')?'<svg':'<svg xmlns="http://www.w3.org/2000/svg"'))
+          .replace(/"/g, '\'')
+          .replace(/%/g, '%25')
+          .replace(/#/g, '%23')       
+          .replace(/{/g, '%7B')
+          .replace(/}/g, '%7D')         
+          .replace(/</g, '%3C')
+          .replace(/>/g, '%3E')
+          .replace(/\s+/g,' ');
+}
+
 //
 export class OpenJNG {
     constructor() {
@@ -978,11 +990,11 @@ export class OpenJNG {
     async recodePNG() {
         if (this.checkSignature()) {
             // kill almost instantly
-            let IMAGE = new Promise(async(R)=>R(await createImageBitmap(await loadImage(this.A ? encodeURL([`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            let IMAGE = new Promise(async(R)=>R(await createImageBitmap(await loadImage(this.A ? (`data:image/svg+xml,` + encodeSvg(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
 <defs><mask id="mask"><image xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
 <image xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
-</svg>`], `image/svg+xml;charset=utf-8`, true) : this.RGB))));
+</svg>`)) : this.RGB))));
             
             //
             if (!this.blazer) {
