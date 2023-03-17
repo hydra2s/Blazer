@@ -1,3 +1,10 @@
+function swap32(val) {
+    return ((val & 0xFF) << 24)
+           | ((val & 0xFF00) << 8)
+           | ((val >> 8) & 0xFF00)
+           | ((val >> 24) & 0xFF);
+}
+
 export class BlazerBMP {
     constructor(imageData) {
         
@@ -50,55 +57,45 @@ export class BlazerBMP {
             }
         ))(new URL("build/release.wasm", import.meta.url));
         this._module = _module;
-        
-        //
-        this._header = new Uint8Array([ // TODO: encode as UINT32
-            0x42, 0x4d,             // (0) BM
-            0x00, 0x00, 0x00, 0x00, // (2) total length
-            0x00, 0x00, 0x00, 0x00, // (6) skip unused fields
-            0x7a, 0x00, 0x00, 0x00, // (10) offset to pixels
-            0x6c, 0x00, 0x00, 0x00, // (14) header size (108)
-            0x00, 0x00, 0x00, 0x00, // (18) width
-            0x00, 0x00, 0x00, 0x00, // (22) height
-            1, 0x00,   32, 0x00, // (26) 1 plane, 32-bits (RGBA)
-            3, 0x00, 0x00, 0x00, // (30) no compression (BI_BITFIELDS, 3)
-            0x00, 0x00, 0x00, 0x00, // (34) bitmap size incl. padding (stride x height)
-            0x13, 0xB , 0x00, 0x00, // (38) pixels/meter h (~72 DPI x 39.3701 inch/m)
-            0x13, 0xB , 0x00, 0x00, // (42) pixels/meter v
-            0x00, 0x00, 0x00, 0x00, // (46) skip color/important colors
-            0x00, 0x00, 0x00, 0x00, // (50) skip color/important colors
-            0x00, 0xFF, 0x00, 0x00, // (54) red channel mask
-            0x00, 0x00, 0xFF, 0x00, // (60) green channel mask
-            0x00, 0x00, 0x00, 0xFF, // (64) blue channel mask
-            0xFF, 0x00, 0x00, 0x00, // (66) alpha channel mask
-            //0xFF, 0x00, 0x00, 0x00, // (54) red channel mask
-            //0x00, 0xFF, 0x00, 0x00, // (60) green channel mask
-            //0x00, 0x00, 0xFF, 0x00, // (64) blue channel mask
-            //0x00, 0x00, 0x00, 0xFF, // (66) alpha channel mask
-            0x20, 0x6e, 0x69, 0x57  // (70) " win" color space
-        ]);
+        this._header = new Uint32Array([
+            0x0000424d, // (-2) header byte with offset
+            0x00000000, // (2) total length
+            0x00000000, // (6) skip unused fields
+            0x7a000000, // (10) offset to pixels
+            0x6c000000, // (14) header size (108)
+            0x00000000, // (18) width
+            0x00000000, // (22) height
+            0x01002000, // (26) 1 plane, 32-bits (RGBA)
+            0x03000000, // (30) no compression (BI_BITFIELDS, 3)
+            0x00000000, // (34) bitmap size incl. padding (stride x height)
+            0x130B0000, // (38) pixels/meter h (~72 DPI x 39.3701 inch/m)
+            0x130B0000, // (42) pixels/meter v
+            0x00000000, // (46) skip color/important colors
+            0x00000000, // (50) skip color/important colors
+            0x00FF0000, // (54) red channel mask
+            0x0000FF00, // (60) green channel mask
+            0x000000FF, // (64) blue channel mask
+            0xFF000000, // (66) alpha channel mask
+            0x206e6957  // (70) " win" color space
+        ]).map(swap32);
         return this;
     }
 
     context(ctx, w, h) {
         this.ctx = ctx, this.w = w, this.h = h;
-        let stride         = ((32 * w + 31) / 32) << 2,
-            pixelArraySize = stride * h;
-
-        //
-        this.fileLength = 122 + pixelArraySize;
-        this._from = this._module.alloc(this.fileLength+2)+2;
-        new Uint8Array(this._module.memory.buffer, this._from, 122).set(this._header);
-
-        //
-        let _view = new DataView(this._module.memory.buffer, this._from, 122);
-        _view.setUint32(2, this.fileLength, true);
-        _view.setUint32(18, w, true);
-        _view.setUint32(22, -h >>> 0, true);
-        _view.setUint32(34, pixelArraySize, true);
-
-        //
         this.getPixelPack = (x,y,w,h,P)=>{ new Uint32Array(this._module.memory.buffer, P, w*h).set(new Uint32Array(this.ctx.getImageData(x,y,w,h).data.buffer)); return P; };
+
+        //
+        let pixelArraySize = (((32 * w + 31) / 32) << 2) * h;
+        let fileAlloc = this._module.alloc((this.fileLength = 122 + pixelArraySize)+2);
+        new Uint32Array(this._module.memory.buffer, fileAlloc, 124).set(this._header);
+
+        //
+        let _view = new DataView(this._module.memory.buffer, (this._from = fileAlloc+2), 38);
+            _view.setUint32(2, this.fileLength, true);
+            _view.setUint32(18, w, true);
+            _view.setUint32(22, -h >>> 0, true);
+            _view.setUint32(34, pixelArraySize, true);
 
         //
         return this;
@@ -738,7 +735,9 @@ let loadImage = async (url) => {
     image.decoding = "async";
     image.fetchPriority = "high";
     image.loading = "eager";
-    image.src = await url;
+
+    // don't doubt about that
+    let $url = await url; image.src = ($url instanceof Blob) ? URL.createObjectURL($url) : $url;
     await image.decode();
 
     // FOR DEBUG!
@@ -751,6 +750,39 @@ let loadImage = async (url) => {
 
     //
     return image;
+}
+
+//
+function uuidv4() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+}
+
+//
+let loadBitmapThroughput = async (url) => {
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+        return new Promise((R,E)=>{
+            const single = (ev) => { self.removeEventListener('message', single); if (ev.id == id) { R(ev.data.svg); }; };
+            self.addEventListener('message', single);
+            self.postMessage({ id: uuidv4(), svg: "request", url });
+        });
+    } else {
+        return createImageBitmap(await loadImage(url));
+    }
+}
+
+// needs interface for worker
+let provideForWorker = (worker) => {
+    worker.addEventListener('message', async (ev) => {
+        worker.postMessage({id: ev.data.id, svg: await createImageBitmap(await loadImage(ev.data.url))});
+    });
+}
+
+//
+let loadBitmapAsBlob = async (url) => {
+    let $url = await url;
+    return createImageBitmap(($url instanceof Blob) ? $url : (await fetch($url).then(res => res.blob())));
 }
 
 //
@@ -989,12 +1021,14 @@ export class OpenJNG {
 
     async recodePNG() {
         if (this.checkSignature()) {
+
             // kill almost instantly
-            let IMAGE = new Promise(async(R)=>R(await createImageBitmap(await loadImage(this.A ? (`data:image/svg+xml,` + encodeSvg(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            // TODO: find a way to do it in webworker better
+            let IMAGE = new Promise(async(R)=>R(await (this.A ? loadBitmapThroughput(`data:image/svg+xml,` + encodeSvg(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
 <defs><mask id="mask"><image image-rendering="optimizeSpeed" style="image-rendering:pixelated" xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
 <image image-rendering="optimizeSpeed" style="image-rendering:pixelated" xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
-</svg>`)) : this.RGB))));
+</svg>`)) : loadBitmapAsBlob(this.RGB))));
             
             //
             if (!this.blazer) {
