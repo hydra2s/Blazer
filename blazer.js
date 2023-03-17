@@ -992,8 +992,8 @@ export class OpenJNG {
             // kill almost instantly
             let IMAGE = new Promise(async(R)=>R(await createImageBitmap(await loadImage(this.A ? (`data:image/svg+xml,` + encodeSvg(`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg color-interpolation="auto" width="${this.header.width}" height="${this.header.height}" viewBox="0 0 ${this.header.width} ${this.header.height}" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.2" baseProfile="tiny">
-<defs><mask id="mask"><image xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
-<image xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
+<defs><mask id="mask"><image image-rendering="optimizeSpeed" style="image-rendering:pixelated" xlink:href="${await this.A}" width="${this.header.width}" height="${this.header.height}"/></mask></defs>
+<image image-rendering="optimizeSpeed" style="image-rendering:pixelated" xlink:href="${await this.RGB}" width="${this.header.width}" height="${this.header.height}" mask="url(#mask)"/>
 </svg>`)) : this.RGB))));
             
             //
