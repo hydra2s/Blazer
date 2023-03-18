@@ -10,7 +10,7 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork} from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork, IDBCache} from "./blazer.js";
         
         //
         const WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
@@ -32,8 +32,23 @@
         let blob = await blazer.encode();
         //console.timeEnd("FastBMP");
         
+        let cache = new IDBCache();
+        let db = await cache.open("fs", {
+            upgrade(db) {
+                const store = db.createObjectStore('test', {
+                    keyPath: 'id',
+                    autoIncrement: true,
+                });
+                //store.createIndex('date', 'date')
+            }
+        });
+        const store = db.store("test");
+        await store.put({
+            "id": "wlop",
+            "blob": blob
+        });
         
-        document.body.appendChild(await loadImage(blob));
+        document.body.appendChild(await loadImage(await (await store.get("wlop")).blob));
     </script>
 </body>
 </html>

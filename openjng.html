@@ -13,9 +13,9 @@
 
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
         const {OpenJNG} = await WC.proxy("default");
-
+        
         var jng = await new OpenJNG();
-        document.body.appendChild(await loadImage(await jng.load("./img/TCBA8S.jng").recodePNG()));
+        document.body.appendChild(await loadImage(await jng.load("./img/opossum.jng")));
     </script>
 </body>
 </html>
