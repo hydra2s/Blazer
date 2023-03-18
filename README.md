@@ -33,6 +33,10 @@ After my 10 years... I decoded (again) JNG data through JPG and PNG browser's na
 
 Yes, I learned almost everything about these things. About 2D context. About WebGL. About WebGPU (begin learning, but good know Vulkan API). About pixels and shaders. About composition and blending. About multi-theading and atomics. About SIMD. About PNG chunks, structs, binary data, difference between view and copy... and giving almost final answer about JNG decoding (except interlacing).
 
+# APNG decoding and canvas, chapter II
+
+Coming soon... probably, in June of 2023 years.
+
 # JS WebSocket Intercom
 
 The main task was to implement objects and classes, as well as method calls, over a remote websocket connection. This
