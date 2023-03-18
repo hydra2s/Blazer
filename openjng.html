@@ -3,17 +3,19 @@
     <title>WebGPU tester</title>
     <!--<script src="pako/pako_deflate.js"></script>-->
     <!--<script src="UPNG.js"></script>-->
-    <script src="https://cdn.sheetjs.com/crc-32-latest/package/crc32.js"></script>
-    <script src="https://cdn.sheetjs.com/crc-32-latest/package/crc32c.js"></script>
+    <script src="node_modules/crc-32/crc32.js"></script>
     <script type="module" src="./blazer.js"></script>
 </head>
 <body>
 
     <script type="module" async>
-        import {OpenJNG} from "./blazer.js";
+        import {loadImage, getSharedImageData, WorkCom, provideForWorker} from "./blazer.js";
 
-        var jng = new OpenJNG();
-        document.body.appendChild(await (await jng.load("./img/TCBA8S.jng")).recodePNG());
+        const WC = new WorkCom(provideForWorker(new Worker("wjng.js", {type: "module"})));
+        const {OpenJNG} = await WC.proxy("default");
+
+        var jng = await new OpenJNG();
+        document.body.appendChild(await loadImage(await (await jng.load("./img/TCBA8S.jng")).recodePNG()));
     </script>
 </body>
 </html>

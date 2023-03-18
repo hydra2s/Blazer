@@ -3,7 +3,6 @@
     <title>WebGPU tester</title>
     <!--<script src="pako/pako_deflate.js"></script>-->
     <!--<script src="UPNG.js"></script>-->
-    <script src="node_modules/crc-32/crc32.js"></script>
     <script type="module" src="./blazer.js"></script>
 
     <meta http-equiv="origin-trial" content="AheTb7dTZtgoY8Fcsznx+0xlpDjy/teBncwVq9xG4xIf9qPWcZTOakvTzk/v7BtAeoL9xu7O87L57Lq7RhasZwgAAABeeyJvcmlnaW4iOiJodHRwOi8vbG9jYWxob3N0OjgwIiwiZmVhdHVyZSI6IlVucmVzdHJpY3RlZFNoYXJlZEFycmF5QnVmZmVyIiwiZXhwaXJ5IjoxNjg4MDgzMTk5fQ==">
@@ -11,12 +10,12 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData} from "./blazer.js";
-        import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
+        import {loadImage, getSharedImageData, WorkCom} from "./blazer.js";
         
         //
-        const _module = await Comlink.wrap(new Worker("wbmp.js", {type: "module"}));
-        
+        const WC = new WorkCom(new Worker("wbmp.js", {type: "module"}));
+        const {BlazerBMP} = await WC.proxy("default");
+
         //
         let canvas = new OffscreenCanvas(512, 512);
         let ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -25,9 +24,9 @@
 
         //
         const shared = getSharedImageData(ctx,0,0,canvas.width,canvas.height);
-        const blazer = await new _module.BlazerBMP();
+        const blazer = await new BlazerBMP();
         await blazer.init();
-        await blazer.shared(shared, canvas.width, canvas.height);
+        await blazer.shared(WC.shared(shared), canvas.width, canvas.height);
 
 
         //console.time("FastBMP");
@@ -35,7 +34,7 @@
         //console.timeEnd("FastBMP");
         
         
-        document.body.appendChild(await _module.loadImage(blob));
+        document.body.appendChild(await loadImage(blob));
     </script>
 </body>
 </html>

@@ -1,28 +1,13 @@
-import { BlazerBMP } from "./blazer.js";
-import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
+import { BlazerBMP, WorkCom } from "./blazer.js";
 
 //
-class OffscreenCanvasWrap {
-    constructor(w,h,opt) {
-        this._canvas = new OffscreenCanvas(w,h,opt);
-    }
-
-    getContext(name,opt) {
-        return Comlink.proxy(this._canvas.getContext(name,opt));
-    }
-
-    get width() {
-        return this._canvas.width;
-    }
-
-    get height() {
-        return this._canvas.height;
-    }
-}
+const _module = new WorkCom(self);
 
 //
-Comlink.expose({
-    OffscreenCanvasWrap,
-    BlazerBMP,
-    OffscreenCanvasRenderingContext2D
+_module.instance(OffscreenCanvasRenderingContext2D, OffscreenCanvas, BlazerBMP);
+_module.register("default", {
+    BlazerBMP, OffscreenCanvas
 });
+
+//
+//_module.initiate();
