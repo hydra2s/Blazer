@@ -96,3 +96,8 @@ export function makePNGData(fileData: usize, width: u32, height: u32): void {
 export function alloc(size: u32): usize {
   return heap.alloc(size);
 }
+
+//
+export function free(ptr: u32): void {
+  return heap.free(ptr);
+}
