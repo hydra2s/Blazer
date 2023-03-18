@@ -50,7 +50,7 @@ import WebSocket, {WebSocketServer} from 'ws';
             console.log("Called with: " + a);
         }
 
-        let receiver = new InterCom(ws);
+        let receiver = new InterCom(ws, true);
         receiver.on("register", async (changes)=>{
 
             // answer to promise

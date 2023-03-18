@@ -13,7 +13,7 @@
         import {loadImage, getSharedImageData, WorkCom} from "./blazer.js";
         
         //
-        const WC = new WorkCom(new Worker("wbmp.js", {type: "module"}));
+        const WC = new WorkCom(new Worker("wbmp.js", {type: "module"}), true);
         const {BlazerBMP} = await WC.proxy("default");
 
         //
