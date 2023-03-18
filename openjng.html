@@ -11,11 +11,11 @@
     <script type="module" async>
         import {loadImage, getSharedImageData, InterWork, provideForWorker} from "./blazer.js";
 
-        const WC = new InterWork(provideForWorker(new Worker("wjng.js", {type: "module"})), true);
+        const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
         const {OpenJNG} = await WC.proxy("default");
 
         var jng = await new OpenJNG();
-        document.body.appendChild(await loadImage(await (await jng.load("./img/TCBA8S.jng")).recodePNG()));
+        document.body.appendChild(await loadImage(await jng.load("./img/TCBA8S.jng").recodePNG()));
     </script>
 </body>
 </html>
