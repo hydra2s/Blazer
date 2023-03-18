@@ -9,9 +9,9 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, WorkCom, provideForWorker} from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork, provideForWorker} from "./blazer.js";
 
-        const WC = new WorkCom(provideForWorker(new Worker("wjng.js", {type: "module"})), true);
+        const WC = new InterWork(provideForWorker(new Worker("wjng.js", {type: "module"})), true);
         const {OpenJNG} = await WC.proxy("default");
 
         var jng = await new OpenJNG();

@@ -1,7 +1,7 @@
-import { BlazerBMP, WorkCom } from "./blazer.js";
+import { BlazerBMP, InterWork } from "./blazer.js";
 
 //
-const _module = new WorkCom(self);
+const _module = new InterWork(self);
 
 //
 _module.instance(OffscreenCanvasRenderingContext2D, OffscreenCanvas, BlazerBMP);

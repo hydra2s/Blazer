@@ -10,10 +10,10 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, WorkCom} from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork} from "./blazer.js";
         
         //
-        const WC = new WorkCom(new Worker("wbmp.js", {type: "module"}), true);
+        const WC = new InterWork(new Worker("wbmp.js", {type: "module"}), true);
         const {BlazerBMP} = await WC.proxy("default");
 
         //
