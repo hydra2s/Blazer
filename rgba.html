@@ -1,0 +1,36 @@
+<!doctype html>
+<head>
+    <title>WebGPU tester</title>
+    <!--<script src="pako/pako_deflate.js"></script>-->
+    <!--<script src="UPNG.js"></script>-->
+    <script src="node_modules/crc-32/crc32.js"></script>
+    <script type="module" src="./blazer.js"></script>
+</head>
+<body>
+
+    <script type="module" async>
+        import {loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache, BlazerRGBA} from "./blazer.js";
+
+        //const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
+        //const {BlazerRGBA} = await WC.proxy("default");
+        
+        /*const db = await new IDBCache().open("openjng", {
+            upgrade(db) {
+                const store = db.createObjectStore(location.hostname, {
+                    keyPath: 'id',
+                    autoIncrement: true,
+                });
+            }
+        });*/
+        //indexedDB.deleteDatabase("openjng");
+
+        var rgba = await new BlazerRGBA();
+        var canvas = document.createElement("canvas");
+        var bitmap = await rgba.loadImageBitmap("./img/sample.rgba");
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+        canvas.getContext("bitmaprenderer").transferFromImageBitmap(bitmap);
+        document.body.appendChild(canvas);
+    </script>
+</body>
+</html>

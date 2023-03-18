@@ -15,6 +15,13 @@ Blazer - new BMP or PNG encoder with much more faster encoding...
 - Don't using slow `setTimeout` methods.
 - Full support for `async` and `await`.
 
+# RGBA image format decoder and encoder
+
+Only just for fun...
+
+- https://github.com/bzotto/rgba_bitmap
+- https://bzotto.medium.com/introducing-the-rgba-bitmap-file-format-4a8a94329e2c
+
 # OpenJNG
 
 Reincarnation of my oldest project, for Open JNG format in JS and browser. 
