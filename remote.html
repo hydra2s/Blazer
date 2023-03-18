@@ -10,23 +10,22 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork, IDBCache} from "./blazer.js";
-        
-        //
-        const WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
-        const {BlazerBMP} = await WC.proxy("default");
-        const {idle} = await WC.proxy("idle");
+        import {loadImage, InterWork, IDBCache} from "./blazer.js";
 
         //
-        let canvas = new OffscreenCanvas(512, 512);
-        let ctx = canvas.getContext("2d", { willReadFrequently: true });
+        const WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
+        const {BlazerBMP, OffscreenCanvas, getSharedImageData} = await WC.proxy("default");
+
+        //
+        let canvas = await new OffscreenCanvas(512, 512);
+        let ctx = await canvas.getContext("2d", { willReadFrequently: true });
         ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
         ctx.fillRect(64, 64, 128, 128);
 
         //
-        const shared = getSharedImageData(ctx,0,0,canvas.width,canvas.height);
+        const shared = getSharedImageData(ctx,0,0, canvas.width, canvas.height);
         const blazer = await new BlazerBMP();
-        await blazer.init().shared(WC.shared(shared), canvas.width, canvas.height);
+        await blazer.init().shared(shared, canvas.width, canvas.height);
 
 
         //console.time("FastBMP");
