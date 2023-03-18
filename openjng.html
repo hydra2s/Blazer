@@ -14,6 +14,7 @@
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
         const {OpenJNG} = await WC.proxy("default");
         
+        /*
         const db = await new IDBCache().open("openjng", {
             upgrade(db) {
                 const store = db.createObjectStore(location.hostname, {
@@ -21,10 +22,11 @@
                     autoIncrement: true,
                 });
             }
-        });
+        });*/
+        //indexedDB.deleteDatabase("openjng");
 
         var jng = await new OpenJNG();
-        document.body.appendChild(await loadImage(await jng.load("./img/opossum.jng")));
+        document.body.appendChild(await loadImage(await jng.load("./img/TCBA8S.jng")));
     </script>
 </body>
 </html>
