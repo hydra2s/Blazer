@@ -11,6 +11,17 @@ export function makeARGB(fileData: usize, width: u32, height: u32): void {
   }
 }
 
+export function makeBGRA(fileData: usize, width: u32, height: u32): void {
+  let W: u32 = width*4;
+  for (let Y:u32=0;Y<height;Y++) {
+    let P: usize = getPixelPack(0,Y,width,1,fileData+Y*W);
+    for (let X:u32=0;X<W;X+=16) {
+      let pX: usize = P+X;
+      v128.store(pX, v128.swizzle(v128.load(pX), i8x16(2,1,0,3, 5,6,4,7, 10,9,8,11, 14,13,12,15)));
+    }
+  }
+}
+
 export function makeRGBA(fileData: usize, width: u32, height: u32): void {
   let W: u32 = width*4;
   for (let Y:u32=0;Y<height;Y++) {
