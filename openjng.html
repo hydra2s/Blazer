@@ -9,7 +9,7 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache} from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache} from "./blazer.js";
 
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
         const {OpenJNG} = await WC.proxy("default");
@@ -25,8 +25,10 @@
         });
         //indexedDB.deleteDatabase("openjng");
 
-        var jng = await new OpenJNG();
-        document.body.appendChild(await loadImage(await jng.load("./img/TCBA8S.jng")));
+        var jng = await new OpenJNG({
+            loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
+        });
+        document.body.appendChild(await loadImage(await jng.load("./img/glenn99p.jng")));
     </script>
 </body>
 </html>
