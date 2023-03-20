@@ -1,35 +1,52 @@
 import { getPixelPack } from "./env"
 
+//
 export function makeARGB(fileData: usize, width: u32, height: u32): void {
   let W: u32 = width*4;
+  let Wr = (W>>4)<<4;
   for (let Y:u32=0;Y<height;Y++) {
     let P: usize = getPixelPack(0,Y,width,1,fileData+Y*W);
-    for (let X:u32=0;X<W;X+=16) {
+    for (let X:u32=0;X<Wr;X+=16) {
       let pX: usize = P+X;
       v128.store(pX, v128.swizzle(v128.load(pX), i8x16(3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14)));
     }
-  }
-}
-
-export function makeBGRA(fileData: usize, width: u32, height: u32): void {
-  let W: u32 = width*4;
-  for (let Y:u32=0;Y<height;Y++) {
-    let P: usize = getPixelPack(0,Y,width,1,fileData+Y*W);
-    for (let X:u32=0;X<W;X+=16) {
+    for (let X:u32=Wr;X<W;X+=4) {
       let pX: usize = P+X;
-      v128.store(pX, v128.swizzle(v128.load(pX), i8x16(2,1,0,3, 5,6,4,7, 10,9,8,11, 14,13,12,15)));
+      let pI: u8[] = [load<u8>(pX+3), load<u8>(pX+0), load<u8>(pX+1), load<u8>(pX+2)];
+      store<u8>(pX+0, pI[0]);
+      store<u8>(pX+1, pI[1]);
+      store<u8>(pX+2, pI[2]);
+      store<u8>(pX+3, pI[3]);
     }
   }
 }
 
+//
+export function makeBGRA(fileData: usize, width: u32, height: u32): void {
+  let W: u32 = width*4;
+  let Wr = (W>>4)<<4;
+  for (let Y:u32=0;Y<height;Y++) {
+    let P: usize = getPixelPack(0,Y,width,1,fileData+Y*W);
+    for (let X:u32=0;X<Wr;X+=16) {
+      let pX: usize = P+X;
+      v128.store(pX, v128.swizzle(v128.load(pX), i8x16(2,1,0,3, 5,6,4,7, 10,9,8,11, 14,13,12,15)));
+    }
+    for (let X:u32=Wr;X<W;X+=4) {
+      let pX: usize = P+X;
+      let pI: u8[] = [load<u8>(pX+2), load<u8>(pX+1), load<u8>(pX+0), load<u8>(pX+3)]
+      store<u8>(pX+0, pI[0]);
+      store<u8>(pX+1, pI[1]);
+      store<u8>(pX+2, pI[2]);
+      store<u8>(pX+3, pI[3]);
+    }
+  }
+}
+
+//
 export function makeRGBA(fileData: usize, width: u32, height: u32): void {
   let W: u32 = width*4;
   for (let Y:u32=0;Y<height;Y++) {
     let P: usize = getPixelPack(0,Y,width,1,fileData+Y*W);
-    //for (let X:u32=0;X<W;X+=16) {
-      //let pX: usize = P+X;
-      //v128.store(pX, v128.swizzle(v128.load(pX), i8x16(3,0,1,2, 7,4,5,6, 11,8,9,10, 15,12,13,14)));
-    //}
   }
 }
 
