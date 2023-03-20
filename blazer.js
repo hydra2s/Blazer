@@ -6,12 +6,14 @@ import { DataReader } from "./lib/reader.js"
 
 //
 import * as utils from "./lib/utils.js"
+import * as apng from "./lib/apng.js"
 
 //
 export { OpenJNG, BlazerPNG, BlazerBMP, DataReader, BlazerRGBA };
 export * from "./lib/utils.js"
 export * from "./lib/intercom.js"
 export * from "./lib/idb-cache.js"
+export * from "./lib/apng.js"
 
 //
 import { InterWork } from "./lib/intercom.js"
@@ -24,7 +26,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScop
     const WC = new InterWork(self); WorkerLib.interwork = WC;
     const _module = {
         OpenJNG, BlazerPNG, BlazerRGBA, BlazerBMP, OffscreenCanvas, WorkerLib, 
-        ...utils
+        ...utils, ...apng
     };
 
     // will used for await ops (such as register)

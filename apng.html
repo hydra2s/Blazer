@@ -1,0 +1,34 @@
+<!doctype html>
+<head>
+    <title>WebGPU tester</title>
+    <!--<script src="pako/pako_deflate.js"></script>-->
+    <!--<script src="UPNG.js"></script>-->
+    <script src="node_modules/crc-32/crc32.js"></script>
+    <script type="module" src="./blazer.js"></script>
+</head>
+<body>
+
+    <script type="module" async>
+        import {loadImageBitmap, loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache, APNGDecoder, APNGPreRender} from "./blazer.js";
+
+        const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
+        const {} = await WC.proxy("default");
+
+        var apng = await new APNGDecoder();
+        var frames = await apng.load("./img/o_sample.png");
+
+        //let images = await Promise.all(frames.map((F)=>{
+            //return loadImage(F.blob);
+        //}));
+
+        let prerender = new APNGPreRender(apng.width, apng.height, frames);
+        let bitmaps = await prerender.prerender();
+        let images = await Promise.all(bitmaps.map(loadImageBitmap));
+
+        images.forEach((I)=>{
+            document.body.appendChild(I);
+        });
+        
+    </script>
+</body>
+</html>
