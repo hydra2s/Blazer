@@ -35,7 +35,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScop
     });
 
     //
-    WC.instance(OffscreenCanvasRenderingContext2D, OffscreenCanvas, OpenJNG, BlazerPNG, BlazerBMP);
+    WC.instance(OffscreenCanvasRenderingContext2D, OffscreenCanvas, OpenJNG, BlazerPNG, BlazerBMP, apng.APNGFrame, apng.APNGControl);
     WC.register("default", WorkerLib.library = _module);
     WC.observe();
 }
