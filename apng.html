@@ -15,13 +15,15 @@
         const {} = await WC.proxy("default");
 
         var apng = await new APNGDecoder();
-        var frames = await apng.load("./img/o_sample.png");
+        var frames = await apng.load("./img/clock.png");
 
         //let images = await Promise.all(frames.map((F)=>{
             //return loadImage(F.blob);
         //}));
 
-        let prerender = new APNGPreRender(apng.width, apng.height, frames);
+        let prerender = new APNGPreRender(apng.width, apng.height, frames, {
+            fullFrame: false, // applicable if your animator support x,y,width,height and clear draw (i.e. no blend op)
+        });
         let bitmaps = await prerender.prerender();
         let images = await Promise.all(bitmaps.map(loadImageBitmap));
 
