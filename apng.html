@@ -26,12 +26,10 @@
         });
         console.time("PreRender APNG");
         let bitmaps = await prerender.prerender();
-        let images = await Promise.all(bitmaps.map((I)=>loadImageBitmap(I)));
+        let canvasI = await Promise.all(bitmaps.map((I)=>loadImageBitmap(I)));
         console.timeEnd("PreRender APNG");
 
-        images.forEach((I)=>{
-            document.body.appendChild(I);
-        });
+        canvasI.forEach(document.body.appendChild.bind(document.body));
         
     </script>
 </body>
