@@ -9,10 +9,10 @@
 <body>
 
     <script type="module" async>
-        import {loadImageBitmap, loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache, APNGPreRender, APNGDecoder} from "./blazer.js";
+        import {loadImageBitmap, loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache} from "./blazer.js";
 
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
-        const {  } = await WC.proxy("default");
+        const { APNGPreRender, APNGDecoder } = await WC.proxy("default");
 
         var apng = await new APNGDecoder();
 
