@@ -23,8 +23,7 @@
             //return loadImage(F.blob);
         //}));
         
-        
-        let prerender = await new APNGPreRender(await apng.width, await apng.height, await frames, {
+        let prerender = await new APNGPreRender(apng.width, apng.height, frames, {
             fullFrame: false, // applicable if your animator support x,y,width,height and clear draw (i.e. no blend op)
         });
         
