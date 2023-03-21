@@ -20,7 +20,7 @@ import WebSocket, {WebSocketServer} from 'ws';
 
     const wss = new WebSocketServer({ port: 8000 });
     wss.on('connection', async function connection(ws) {
-        let transmitter = new InterCom(ws);
+        let transmitter = new InterCom(ws, true);
 
         // promise test
         let answer = {};
@@ -44,7 +44,7 @@ import WebSocket, {WebSocketServer} from 'ws';
 
 (async()=>{
     const ws = new WebSocket('ws://127.0.0.1:8000/');
-    ws.on("open", ()=>{
+    ws.on("open", async ()=>{
 
         function callback(a) {
             console.log("Called with: " + a);
@@ -52,7 +52,7 @@ import WebSocket, {WebSocketServer} from 'ws';
 
         let receiver = new InterCom(ws, true);
         receiver.on("register", async (changes)=>{
-
+            
             // answer to promise
             if (changes.className == "answer") {
                 let answer = receiver.proxy(changes.className);
