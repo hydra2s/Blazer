@@ -57,6 +57,13 @@ I certainly understand that this is a Chinese knockoff or half-copy of David Mra
 - Lower-level handling and API for APNG format. 
 - Smaller implementation itself due to new principles and OOPs. 
 
+What the hell is the point of all this?
+- Maybe someone needs to animate APNG into Canvas (and it doesn't work). 
+- Or maybe someone just needs to extract certain frames from an APNG. 
+- Or maybe someone needs to either work from the Web Worker with it. 
+- Or maybe someone just needs low-level access. 
+- Or if some asshole for some reason refuses to support APNG in the browser. 
+
 # JS WebSocket Intercom
 
 The main task was to implement objects and classes, as well as method calls, over a remote websocket connection. This
