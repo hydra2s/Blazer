@@ -44,6 +44,19 @@ Yes, I learned almost everything about these things. About 2D context. About Web
 
 Coming soon... probably, in June of 2023 years.
 
+I certainly understand that this is a Chinese knockoff or half-copy of David Mrazeulian's famous original, and is essentially a mockery of his product. But at least it's my complete 2023 remaster of the whole thing. But just listen to my realization and idea. 
+- No more unnecessary copying (using the "view" principle), which achieves faster execution speed.
+- The chunks are collected almost without any copying. 
+- Really works even in Web Worker. 
+- Supports async and await.
+- Works faster thanks to ImageBitmap instead of ImageData. 
+- Implemented PreRender support in ImageBitmap. 
+- Really uses Blob objects instead of base64. 
+- Uses faster principles than those used 10 years ago. 
+- No more unnecessary support for old and obsolete browsers. 
+- Lower-level handling and API for APNG format. 
+- Smaller implementation itself due to new principles and OOPs. 
+
 # JS WebSocket Intercom
 
 The main task was to implement objects and classes, as well as method calls, over a remote websocket connection. This
