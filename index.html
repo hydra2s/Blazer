@@ -25,7 +25,7 @@
 
         //
         const blazer = await new BlazerBMP();
-        await blazer.init().shared(getSharedImageData(ctx,0,0,canvas.width,canvas.height), canvas.width, canvas.height);
+        await blazer.init().shared(getSharedImageData(ctx,0,0,canvas.width,canvas.height));
 
         //console.time("FastBMP");
         //console.timeEnd("FastBMP");
