@@ -1,2 +1,2 @@
-call vite
+call vite --host
 pause
