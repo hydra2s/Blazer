@@ -21,8 +21,8 @@ import { InterWork } from "./lib/intercom.js"
 //
 const WorkerLib = {};
 
-//
-if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+// TODO: support for shared worker libraries
+if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
     const WC = new InterWork(self); WorkerLib.interwork = WC;
     const _module = {
         OpenJNG, BlazerPNG, BlazerRGBA, BlazerBMP, OffscreenCanvas, WorkerLib, 
