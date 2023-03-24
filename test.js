@@ -11,6 +11,10 @@ import WebSocket, {WebSocketServer} from 'ws';
             return 2;
         }
 
+        with(fn, a) {
+            return fn(a);
+        }
+
         async doWork(value) {
             // you can call function proxy
             //await callback(this.work);
@@ -48,6 +52,7 @@ import WebSocket, {WebSocketServer} from 'ws';
 
         function callback(a) {
             console.log("Called with: " + a);
+            return a;
         }
 
         let receiver = new InterCom(ws, true);
@@ -69,6 +74,9 @@ import WebSocket, {WebSocketServer} from 'ws';
 
                 // try to set
                 jobs.work = 1;
+
+                console.log(await jobs.with(receiver.remote(callback), 25));
+                //await receiver.eval(callback)(25);
 
                 // try getter
                 console.log(await jobs.practice);
