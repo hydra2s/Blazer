@@ -18,10 +18,10 @@
         </filter></svg>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache} from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache, OpenJNG} from "./blazer.js";
 
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
-        const {OpenJNG} = await WC.proxy("default");
+        //const {OpenJNG} = await WC.proxy("default");
         
         
         const db = await new IDBCache().open("openjng", {
