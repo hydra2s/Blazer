@@ -9,13 +9,13 @@
 <body>
 
     <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache } from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache, OpenMNG } from "./blazer.js";
 
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
-        const {OpenJNG} = await WC.proxy("default");
+        //const {OpenMNG} = await WC.proxy("default");
         
         
-        const db = await new IDBCache().open("openjng", {
+        const db = await new IDBCache().open("openmng", {
             upgrade(db) {
                 const store = db.createObjectStore(location.hostname, {
                     keyPath: 'id',
@@ -25,10 +25,10 @@
         });
         //indexedDB.deleteDatabase("openjng");
 
-        var jng = await new OpenJNG({
+        var mng = await new OpenMNG({
             loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
         });
-        document.body.appendChild(await loadImage(await jng.load("./img/opossum.jng")));
+        await mng.load("./img/T03SCRL.mng");
     </script>
 </body>
 </html>

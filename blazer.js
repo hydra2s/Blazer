@@ -3,13 +3,14 @@ import { BlazerPNG } from "./lib/png.js"
 import { BlazerBMP } from "./lib/bmp.js"
 import { BlazerRGBA } from "./lib/rgba.js"
 import { DataReader } from "./lib/reader.js"
+import { OpenMNG } from "./lib/openmng.js"
 
 //
 import * as utils from "./lib/utils.js"
 import * as apng from "./lib/apng.js"
 
 //
-export { OpenJNG, BlazerPNG, BlazerBMP, DataReader, BlazerRGBA };
+export { OpenJNG, BlazerPNG, BlazerBMP, DataReader, BlazerRGBA, OpenMNG };
 export * from "./lib/utils.js"
 export * from "./lib/intercom.js"
 export * from "./lib/idb-cache.js"
@@ -25,7 +26,7 @@ const WorkerLib = {};
 if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
     const WC = new InterWork(self); WorkerLib.interwork = WC;
     const _module = {
-        OpenJNG, BlazerPNG, BlazerRGBA, BlazerBMP, OffscreenCanvas, WorkerLib, 
+        OpenJNG, BlazerPNG, BlazerRGBA, BlazerBMP, OffscreenCanvas, WorkerLib, OpenMNG,
         ...utils, ...apng
     };
 
@@ -35,7 +36,7 @@ if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && se
     });
 
     //
-    WC.instance(OffscreenCanvasRenderingContext2D, OffscreenCanvas, OpenJNG, BlazerPNG, BlazerBMP, apng.APNGFrame, apng.APNGControl);
+    WC.instance(OffscreenCanvasRenderingContext2D, OffscreenCanvas, OpenMNG, OpenJNG, BlazerPNG, BlazerBMP, apng.APNGFrame, apng.APNGControl);
     WC.register("default", WorkerLib.library = _module);
     WC.observe();
 }
