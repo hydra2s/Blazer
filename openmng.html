@@ -8,8 +8,10 @@
 </head>
 <body>
 
+    <canvas width="800" height="800" id="canvas"></canvas>
+
     <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache, OpenMNG } from "./blazer.js";
+        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache, OpenMNG, MNGRenderer } from "./blazer.js";
 
         const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
         //const {OpenMNG} = await WC.proxy("default");
@@ -29,6 +31,31 @@
             loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
         });
         await mng.load("./img/T03SCRL.mng");
+
+        //
+        var renderer = await new MNGRenderer(mng);
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        
+
+        //
+        while (true) {
+            let F = null;
+            try {
+                F = await (await (await renderer.drawObjects())).getCurrentFrame();
+                
+            } catch(e) {
+                throw e;
+                break;
+            }
+
+            if (F) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(F, 0, 0);
+            }
+
+            await new Promise((r)=>requestAnimationFrame(r));
+        }
     </script>
 </body>
 </html>
