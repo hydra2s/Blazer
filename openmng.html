@@ -35,6 +35,8 @@
         //
         var renderer = await new MNGRenderer(mng);
         var canvas = document.getElementById("canvas");
+        canvas.width = await mng.width;
+        canvas.height = await mng.height;
         var ctx = canvas.getContext("2d");
 
         //
