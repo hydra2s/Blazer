@@ -1,6 +1,6 @@
 <!doctype html>
 <head>
-    <title>WebGPU tester</title>
+    <title>MNG testing</title>
     <!--<script src="pako/pako_deflate.js"></script>-->
     <!--<script src="UPNG.js"></script>-->
     <script src="deps/crc32.js"></script>
@@ -30,8 +30,9 @@
         var mng = await new OpenMNG({
             loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
         });
-        await mng.load("./img/PNGGxxxx.mng");
-        //await mng.load("./img/opossum.mng");
+        //await mng.load("./img/PNGGxxxx.mng");
+        await mng.load("./img/opossum.mng");
+        //await mng.load("./img/I01SCRL.mng");
 
         //
         var renderer = await new MNGRenderer(mng);
