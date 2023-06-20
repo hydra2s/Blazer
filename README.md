@@ -34,6 +34,18 @@ JNG - JPEG Network Graphics. If be simply, it's JPEG (wrapper) with alpha channe
 - https://en.wikipedia.org/wiki/JPEG_Network_Graphics
 - http://www.libpng.org/pub/mng/spec/jng.html
 
+### Current features
+
+- [x] Support of Web Workers
+- [x] Blazing fast (almost as native)
+- [x] JPEG data stream support
+- [x] Alpha channel support
+    - [x] JPEG support
+    - [x] PNG support
+- [x] MNG support
+- [ ] 16-bit support (shows as 8-bit)
+- [ ] Progressive support (shows instantly)
+
 ### What I did?
 
 After my 10 years... I decoded (again) JNG data through JPG and PNG browser's native decoders (despite in internets already has JS-based decoders), and composited (RGB and alpha) in WebGPU (for reduce overheads). Now decodes almost blazing fast, even relatively big images. And recoded back into PNG with saving JNG's ancillary chunks.
@@ -43,6 +55,24 @@ Yes, I learned almost everything about these things. About 2D context. About Web
 # OpenMNG - biggest project ever!
 
 I trying to add support of MNG into web browsers and HTML5 canvas finally. 
+
+### Current features
+
+- [ ] Almost full support of MNG (WIP!)
+- [x] MNG-LC support
+- [x] JNG support (our unique feature)
+- [x] Partial `LOOP` chunk support
+    - [x] Nesting support
+    - [ ] Ranges support
+- [x] Partial `SHOW` chunk support
+    - [x] Initial support
+    - [ ] Correct functionality
+- [x] Partial `FRAM` chunk support
+    - [x] Clipping support
+- [ ] Global Palette support
+- [ ] Delta frames
+    - [ ] PNG frames
+    - [ ] JNG frames
 
 # APNG decoding and canvas, chapter II
 
