@@ -69,7 +69,7 @@ I trying to add support of MNG into web browsers and HTML5 canvas finally.
     - [ ] Correct functionality
 - [x] Partial `FRAM` chunk support
     - [x] Clipping support
-- [ ] Global Palette support
+- [x] Global Palette support (not tested)
 - [ ] Delta frames
     - [ ] PNG frames
     - [ ] JNG frames
