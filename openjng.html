@@ -5,27 +5,51 @@
     <!--<script src="UPNG.js"></script>-->
     <script async src="deps/crc32.js"></script>
     <script async type="module" src="./blazer.js"></script>
+    <style>
+        img {
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>PNG image format, True-color</h1>
-    <div>Lossless only (221 kb)</div>
-    <img loading="lazy" decoding="async" src="./img/test.png" alt="PNG-image"/>
+<div style="display: grid; grid-template-columns: minmax(max-content, 50%) minmax(max-content, 50%); max-width: 100%;">
+    <div style="display: inline-block;">
+        <h1>PNG image format, True-color</h1>
+        <div>Lossless only (221 kb)</div>
+        <img loading="lazy" decoding="async" src="./img/test.png" alt="PNG-image" style="max-width: 100%;"/>
+    </div>
 
-    <h1>PNG image format, 8-bit</h1>
-    <div>Optimized to 8-bit, compressed (46.7 kb)</div>
-    <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image"/>
+    <div style="display: inline-block;">
+        <h1>PNG image format, 8-bit</h1>
+        <div>Optimized to 8-bit, compressed (46.7 kb)</div>
+        <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image" style="max-width: 100%;"/>
+    </div>
 
-    <h1>WebP image format, Lossy</h1>
-    <div>Alpha lossless, main quality 90, sampling 4:2:0 (74.7 kb)</div>
-    <div>(Honestly, isn't better quality)</div>
-    <img loading="lazy" decoding="async" src="./img/test.webp" alt="WebP-image"/>
+    <div style="display: inline-block;">
+        <h1>WebP image format, Lossy</h1>
+        <div>Alpha lossless, main quality 90, sampling 4:2:0 (74.7 kb)</div>
+        <div>(Honestly, isn't better quality)</div>
+        <img loading="lazy" decoding="async" src="./img/test.webp" alt="WebP-image" style="max-width: 100%;"/>
+    </div>
 
-    <h1>JNG image format</h1>
-    <div>Alpha quality 90, main quality 90, sampling 4:4:4 (93.8 kb)</div>
-    <div>Opened with special library and polyfill</div>
-    <img loading="lazy" decoding="async" is="img-jng" src-jng="./img/test.jng" alt="JNG-image"/>
-
+    <div style="display: inline-block;">
+        <h1>JNG image format</h1>
+        <div>Alpha quality 90, main quality 90, sampling 4:4:4 (93.8 kb)</div>
+        <div>Opened with special library and polyfill, context menu not supported... <br/> DO NOT SAVE! It's generated as PNG from JNG image file in browser.</div>
+        <img loading="lazy" decoding="async" is="img-jng" src-jng="./img/test.jng" alt="JNG-image" style="max-width: 100%;"/>
+    </div>
+</div>
 
 </body>
 </html>
