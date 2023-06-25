@@ -57,6 +57,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
         }
 
         _loadJNG(_value) {
+            this.fetchPriority = "high";
+            this.crossOrigin = "anonymous";
             this._src = (async ()=>{
                 this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])({
                     loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
