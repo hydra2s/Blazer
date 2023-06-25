@@ -3,32 +3,29 @@
     <title>JNG testing</title>
     <!--<script src="pako/pako_deflate.js"></script>-->
     <!--<script src="UPNG.js"></script>-->
-    <script src="deps/crc32.js"></script>
-    <script type="module" src="./blazer.js"></script>
+    <script async src="deps/crc32.js"></script>
+    <script async type="module" src="./blazer.js"></script>
 </head>
 <body>
 
-    <script type="module" async>
-        import {loadImage, getSharedImageData, InterWork, provideForWorker, loadBitmapThroughput, IDBCache } from "./blazer.js";
+    <h1>PNG image format, True-color</h1>
+    <div>Lossless only (221 kb)</div>
+    <img loading="lazy" decoding="async" src="./img/test.png" alt="PNG-image"/>
 
-        const WC = new InterWork(provideForWorker(new Worker("./blazer.js", {type: "module"})), true);
-        const {OpenJNG} = await WC.proxy("default");
-        
-        
-        const db = await new IDBCache().open("openjng", {
-            upgrade(db) {
-                const store = db.createObjectStore(location.hostname, {
-                    keyPath: 'id',
-                    autoIncrement: true,
-                });
-            }
-        });
-        //indexedDB.deleteDatabase("openjng");
+    <h1>PNG image format, 8-bit</h1>
+    <div>Optimized to 8-bit, compressed (46.7 kb)</div>
+    <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image"/>
 
-        var jng = await new OpenJNG({
-            loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
-        });
-        document.body.appendChild(await loadImage(await jng.load("./img/test.jng")));
-    </script>
+    <h1>WebP image format, Lossy</h1>
+    <div>Alpha lossless, main quality 90, sampling 4:2:0 (74.7 kb)</div>
+    <div>(Honestly, isn't better quality)</div>
+    <img loading="lazy" decoding="async" src="./img/test.webp" alt="WebP-image"/>
+
+    <h1>JNG image format</h1>
+    <div>Alpha quality 90, main quality 90, sampling 4:4:4 (93.8 kb)</div>
+    <div>Opened with special library and polyfill</div>
+    <img loading="lazy" decoding="async" is="img-jng" src-jng="./img/test.jng" alt="JNG-image"/>
+
+
 </body>
 </html>

@@ -43,3 +43,41 @@ if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && se
 
 //
 export { WorkerLib };
+
+// 
+if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)) {
+
+    // TODO: new Image class
+    customElements.define("img-jng", class JNGImage extends HTMLImageElement {
+        constructor() {
+            super();
+
+            this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
+            this._loadJNG(this.getAttribute("src-jng"));
+        }
+
+        _loadJNG(_value) {
+            this._src = (async ()=>{
+                this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])({
+                    loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
+                });
+                return (this.src ||= URL.createObjectURL(await this._jng.load(_value)));
+            })();
+        }
+
+        connectedCallback() {
+            this._loadJNG(this.getAttribute("src-jng"));
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (name == "src-jng" && oldValue != newValue) {
+                this._loadJNG(newValue);
+            }
+        }
+
+        static get observedAttributes() {
+            return ['src', 'src-jng'];
+        }
+    }, { extends: "img" });
+
+}
