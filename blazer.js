@@ -76,7 +76,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
         }
 
         static get observedAttributes() {
-            return ['src', 'src-jng'];
+            return ['src-jng'];
         }
     }, { extends: "img" });
 
