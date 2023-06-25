@@ -55,8 +55,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             //
             this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
             this._loadJNG(this.getAttribute("src-jng"));
-
-            //
             this._observer = new IntersectionObserver(()=>{
                 // activate a JNG image
                 this._src = typeof this._src == "function" ? this._src() : this._src;
@@ -68,15 +66,20 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
         }
 
         _loadJNG(_value) {
-            // optimize image loading
-            this.fetchPriority = "high";
-            this.crossOrigin = "anonymous";
-            this.loading = "eager";
-            this.decoding = "async";
-            this.async = true;
 
             // use lazy loading
+            this.loading = "lazy";
+            this.decoding = "async";
+
+            // for observer
             this._src = (async ()=>{
+                // optimize image loading
+                this.fetchPriority = "high";
+                this.crossOrigin = "anonymous";
+                this.loading = "eager";
+                this.decoding = "async";
+                this.async = true;
+
                 //this._src = typeof this._src == "function" ? this._src() : this._src;
                 try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
                 try { return (this.src ||= URL.createObjectURL(await this._jng.load(_value))); } catch(e) {};
