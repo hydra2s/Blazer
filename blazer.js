@@ -52,23 +52,45 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
         constructor() {
             super();
 
+            //
             this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
             this._loadJNG(this.getAttribute("src-jng"));
+
+            //
+            this._observer = new IntersectionObserver(()=>{
+                // activate a JNG image
+                this._src = typeof this._src == "function" ? this._src() : this._src;
+            }, {
+                root: document.querySelector(':root'),
+                rootMargin: "0px",
+                threshold: 0.0,
+            });
         }
 
         _loadJNG(_value) {
+            // optimize image loading
             this.fetchPriority = "high";
             this.crossOrigin = "anonymous";
+            this.loading = "eager";
+            this.decoding = "async";
+            this.async = true;
+
+            // use lazy loading
             this._src = (async ()=>{
-                this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])({
-                    loadBitmapThroughput: async (url)=>createImageBitmap(await loadImage(url))
-                });
-                return (this.src ||= URL.createObjectURL(await this._jng.load(_value)));
-            })();
+                //this._src = typeof this._src == "function" ? this._src() : this._src;
+                try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
+                try { return (this.src ||= URL.createObjectURL(await this._jng.load(_value))); } catch(e) {};
+                return this.src;
+            });
+        }
+
+        disconnectedCallback() {
+            this._observer.unobserve(this);
         }
 
         connectedCallback() {
             this._loadJNG(this.getAttribute("src-jng"));
+            this._observer.observe(this);
         }
 
         attributeChangedCallback(name, oldValue, newValue) {
