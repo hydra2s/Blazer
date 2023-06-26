@@ -1,0 +1,142 @@
+<!doctype html>
+<head>
+    <!-- meta -->
+    <meta charset="utf-8" http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- heading -->
+    <title>JNG testing</title>
+    <script async src="deps/crc32.js"></script>
+    <script async type="module" src="./blazer.js"></script>
+    
+    <!-- styling -->
+    <style>
+        html {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: clamp(0.333rem, 1vw, 1rem);
+
+            background-color: #FFFFFF;
+            background-image:  linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
+            background-size: 20px 20px;
+
+            box-sizing: border-box;
+        }
+
+        .grid-2 {
+            padding: 1rem;
+            gap: 1rem;
+            display: inline-grid; 
+            grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
+        .grid-2 img {
+            width: 100%;
+            max-width: max-content;
+            box-sizing: border-box;
+        }
+        
+        .grid-3 {
+            padding: 1rem;
+            gap: 1rem;
+            display: inline-grid; 
+            grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr) minmax(min-content, 1fr); 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
+        .grid-3 img {
+            width: 100%;
+            max-width: max-content;
+            box-sizing: border-box;
+        }
+
+        img, picture, source {
+            box-sizing: border-box;
+
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+
+            display: block;
+            object-fit: cover;
+
+            max-width: 100%;
+            max-height: 100%;
+            width: min-content;
+            height: min-content;
+        }
+
+        
+    </style>
+</head>
+<body>
+
+<div style="display: grid; gap: 1rem; grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); width: 100%; box-sizing: border-box;">
+
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+        <h1>JNG image test (small)</h1>
+        
+        <div>  </div><br/>
+        <div class="grid-3">
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGOA1S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBA1S.jng" alt="JNG-image"/>
+
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCOA8S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBA8S.jng" alt="JNG-image"/>
+
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGON0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBN0S.jng" alt="JNG-image"/>
+
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCON0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBN0S.jng" alt="JNG-image"/>
+        </div>
+    </div>
+
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+        <h1>JNG image test (large)</h1>
+
+        <div>  </div><br/>
+        <div class="grid-2">
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0L.jng" alt="JNG-image"/>
+        </div>
+    </div>
+
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+        <h1>JNG image test (opossum, other)</h1>
+
+        <div>  </div><br/>
+        <div class="grid-3">
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/opossum.jng" alt="JNG-image"/>
+        </div>
+    </div>
+
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+        <h1>JNG image test (glenn)</h1>
+
+        <div>  </div><br/>
+        <div class="grid-2">
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99p.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99.jng" alt="JNG-image"/>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

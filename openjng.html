@@ -34,43 +34,63 @@
             user-drag: none;
         }
 
+        .grid-2 {
+            padding: 1rem;
+            gap: 1rem;
+            display: inline-grid; 
+            grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); 
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
+        .grid-2 > div {
+            display: inline-block; 
+            padding: 1rem; 
+            box-sizing: border-box;
+        }
+
+        .grid-2 img {
+            width: 100%;
+            max-width: max-content;
+            box-sizing: border-box;
+        }
         
     </style>
 </head>
 <body>
 
-<div style="display: grid; grid-template-columns: minmax(min-content, 50%) minmax(min-content, 50%); max-width: 100%;">
-    <div style="display: inline-block; padding: 1rem;">
+<div class="grid-2">
+    <div>
         <h1>PNG image format, True-color</h1>
         <div>Lossless only (221 kb)</div><br/>
-        <img loading="lazy" decoding="async" src="./img/test.png" alt="PNG-image" style="max-width: 100%;"/>
+        <img loading="lazy" decoding="async" src="./img/test.png" alt="PNG-image"/>
     </div>
 
-    <div style="display: inline-block; padding: 1rem;">
+    <div>
         <h1>PNG image format, 8-bit</h1>
         <div>Optimized to 8-bit, compressed (46.7 kb)</div><br/>
-        <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image" style="max-width: 100%;"/>
+        <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image"/>
     </div>
 
-    <div style="display: inline-block; padding: 1rem;">
+    <div >
         <h1>WebP image format, Lossless</h1>
         <div>Lossless only (151 kb)</div><br/>
-        <img loading="lazy" decoding="async" src="./img/test-l.webp" alt="WebP-image" style="max-width: 100%;"/>
+        <img loading="lazy" decoding="async" src="./img/test-l.webp" alt="WebP-image"/>
     </div>
 
-    <div style="display: inline-block; padding: 1rem;">
+    <div>
         <h1>WebP image format, Lossy</h1>
         <div>Alpha lossless, main quality 90, sampling 4:2:0 (74.7 kb)</div><br/>
-        <img loading="lazy" decoding="async" src="./img/test.webp" alt="WebP-image" style="max-width: 100%;"/>
+        <img loading="lazy" decoding="async" src="./img/test.webp" alt="WebP-image"/>
     </div>
 
-    <div style="display: inline-block; padding: 1rem;">
+    <div>
         <h1>JPEG image format</h1>
         <div>Alpha replaced by white background, sampling 4:4:4 (48.4 kb)</div><br/>
-        <img loading="lazy" decoding="async" src="./img/test.jpg" alt="JPEG-image" style="max-width: 100%;"/>
+        <img loading="lazy" decoding="async" src="./img/test.jpg" alt="JPEG-image"/>
     </div>
 
-    <div style="display: inline-block; padding: 1rem;">
+    <div>
         <h1>JNG image format</h1>
         <div>Alpha quality 80, main quality 80, sampling 4:4:4 (65.9 kb)</div>
         <div>Opened with special library and polyfill, context menu not supported... <br/> DO NOT SAVE! It's generated as PNG from JNG image file in browser.</div><br/>
@@ -78,11 +98,11 @@
         
         <picture>
             <source is="source-jng" type="image/x-jng" srcjng="./img/test.jng" srcset="./img/test-8.png" alt="JNG-image"/>
-            <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image" style="max-width: 100%;"/>
+            <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image"/>
         </picture>
 
         <!--<picture>
-            <img is="img-jng" loading="lazy" decoding="async" src="./img/test-8.png" srcjng="./img/test.jng" alt="JNG-image" style="max-width: 100%;"/>
+            <img is="img-jng" loading="lazy" decoding="async" src="./img/test-8.png" srcjng="./img/test.jng" alt="JNG-image"/>
             <source type="image/png" srcset="./img/test-8.png" alt="PNG-image"/>
         </picture>-->
     </div>
