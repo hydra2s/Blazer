@@ -54,6 +54,14 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 super();
 
                 //
+                this.src ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
+
+                //
+                this.style.setProperty("display", "none", "");
+                this.addEventListener("error", ()=> this.style.setProperty("display", "none", ""));
+                this.addEventListener("load", ()=> this.style.removeProperty("display"));
+
+                //
                 this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
@@ -64,28 +72,47 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     rootMargin: "0px",
                     threshold: 0.0,
                 });
+
+                
             }
 
             _loadJNG(_value) {
+                if (this._prevent) {
+                    this.removeEventListener("contextmenu", this._prevent);
+                    this.removeEventListener("dragstart", this._prevent);
+                }
+
+                //
+                if (!_value) return this; 
+                const self = this;
 
                 // use lazy loading
-                this.loading = "lazy";
-                this.decoding = "async";
+                self.loading = "lazy";
+                self.decoding = "async";
 
                 // for observer
                 this._src = (async ()=>{
                     // optimize image loading
-                    this.fetchPriority = "high";
-                    this.crossOrigin = "anonymous";
-                    this.loading = "eager";
-                    this.decoding = "async";
-                    this.async = true;
+                    self.fetchPriority = "high";
+                    self.crossOrigin = "anonymous";
+                    self.loading = "eager";
+                    self.decoding = "async";
+                    self.async = true;
 
                     //this._src = typeof this._src == "function" ? this._src() : this._src;
                     try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
-                    try { return (this.src = URL.createObjectURL(await this._jng.load(_value))); } catch(e) {};
+                    try { this.src = URL.createObjectURL(await this._jng.load(_value)); } catch(e) {};
+
+                    // ban actions by default
+                    self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
+                    self.addEventListener("dragstart", this._prevent, true);
+
+                    //
                     return this.src;
                 });
+
+                //
+                return this; 
             }
 
             disconnectedCallback() {
@@ -93,6 +120,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
+                this.src ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer.observe(this);
             }
@@ -115,6 +143,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 super();
 
                 //
+                this.srcset ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
                 this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
@@ -125,37 +154,63 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     rootMargin: "0px",
                     threshold: 0.0,
                 });
+
+                //
+                const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
+                self.style.setProperty("display", "none", "");
+                self.addEventListener("error", ()=> self.style.setProperty("display", "none", ""));
+                self.addEventListener("load", ()=> self.style.removeProperty("display"));
             }
 
             _loadJNG(_value) {
+                if (!_value) return this; 
+
+                //
+                const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
+
+                //
+                if (this._prevent) {
+                    self.removeEventListener("contextmenu", this._prevent);
+                    self.removeEventListener("dragstart", this._prevent);
+                }
 
                 // use lazy loading
-                this.loading = "lazy";
-                this.decoding = "async";
-
+                self.loading = "lazy";
+                self.decoding = "async";
+                
                 // for observer
                 this._src = (async ()=>{
                     // optimize image loading
-                    this.fetchPriority = "high";
-                    this.crossOrigin = "anonymous";
-                    this.loading = "eager";
-                    this.decoding = "async";
-                    this.async = true;
+                    self.fetchPriority = "high";
+                    self.crossOrigin = "anonymous";
+                    self.loading = "eager";
+                    self.decoding = "async";
+                    self.async = true;
 
                     //this._src = typeof this._src == "function" ? this._src() : this._src;
                     try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
                     try { this.srcset = URL.createObjectURL(await this._jng.load(_value)); this.type = "image/png"; } catch(e) {};
+                    
+                    // ban actions by default
+                    self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
+                    self.addEventListener("dragstart", this._prevent, true);
+
+                    //
                     return this.srcset;
                 });
+
+                //
+                return this;
             }
 
             disconnectedCallback() {
-                this._observer.unobserve(this);
+                this._observer.unobserve(this.parentNode?.querySelector("img") || this.parentNode || this);
             }
 
             connectedCallback() {
+                this.srcset ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
                 this._loadJNG(this.getAttribute("srcjng"));
-                this._observer.observe(this);
+                this._observer.observe(this.parentNode?.querySelector("img") || this.parentNode || this);
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
