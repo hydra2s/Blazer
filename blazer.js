@@ -48,63 +48,65 @@ export { WorkerLib };
 if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)) {
 
     // TODO: new Image class
-    customElements.define("img-jng", class JNGImage extends HTMLImageElement {
-        constructor() {
-            super();
+    try {
+        customElements.define("img-jng", class JNGImage extends HTMLImageElement {
+            constructor() {
+                super();
 
-            //
-            this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
-            this._loadJNG(this.getAttribute("src-jng"));
-            this._observer = new IntersectionObserver(()=>{
-                // activate a JNG image
-                this._src = typeof this._src == "function" ? this._src() : this._src;
-            }, {
-                root: document.querySelector(':root'),
-                rootMargin: "0px",
-                threshold: 0.0,
-            });
-        }
-
-        _loadJNG(_value) {
-
-            // use lazy loading
-            this.loading = "lazy";
-            this.decoding = "async";
-
-            // for observer
-            this._src = (async ()=>{
-                // optimize image loading
-                this.fetchPriority = "high";
-                this.crossOrigin = "anonymous";
-                this.loading = "eager";
-                this.decoding = "async";
-                this.async = true;
-
-                //this._src = typeof this._src == "function" ? this._src() : this._src;
-                try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
-                try { return (this.src ||= URL.createObjectURL(await this._jng.load(_value))); } catch(e) {};
-                return this.src;
-            });
-        }
-
-        disconnectedCallback() {
-            this._observer.unobserve(this);
-        }
-
-        connectedCallback() {
-            this._loadJNG(this.getAttribute("src-jng"));
-            this._observer.observe(this);
-        }
-
-        attributeChangedCallback(name, oldValue, newValue) {
-            if (name == "src-jng" && oldValue != newValue) {
-                this._loadJNG(newValue);
+                //
+                this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
+                this._loadJNG(this.getAttribute("src-jng"));
+                this._observer = new IntersectionObserver(()=>{
+                    // activate a JNG image
+                    this._src = typeof this._src == "function" ? this._src() : this._src;
+                }, {
+                    root: document.querySelector(':root'),
+                    rootMargin: "0px",
+                    threshold: 0.0,
+                });
             }
-        }
 
-        static get observedAttributes() {
-            return ['src-jng'];
-        }
-    }, { extends: "img" });
+            _loadJNG(_value) {
+
+                // use lazy loading
+                this.loading = "lazy";
+                this.decoding = "async";
+
+                // for observer
+                this._src = (async ()=>{
+                    // optimize image loading
+                    this.fetchPriority = "high";
+                    this.crossOrigin = "anonymous";
+                    this.loading = "eager";
+                    this.decoding = "async";
+                    this.async = true;
+
+                    //this._src = typeof this._src == "function" ? this._src() : this._src;
+                    try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
+                    try { return (this.src ||= URL.createObjectURL(await this._jng.load(_value))); } catch(e) {};
+                    return this.src;
+                });
+            }
+
+            disconnectedCallback() {
+                this._observer.unobserve(this);
+            }
+
+            connectedCallback() {
+                this._loadJNG(this.getAttribute("src-jng"));
+                this._observer.observe(this);
+            }
+
+            attributeChangedCallback(name, oldValue, newValue) {
+                if (name == "src-jng" && oldValue != newValue) {
+                    this._loadJNG(newValue);
+                }
+            }
+
+            static get observedAttributes() {
+                return ['src-jng'];
+            }
+        }, { extends: "img" });
+    } catch(e) {}
 
 }
