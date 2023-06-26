@@ -1,11 +1,25 @@
 <!doctype html>
 <head>
+    <!-- meta -->
+    <meta charset="utf-8" http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- heading -->
     <title>JNG testing</title>
-    <!--<script src="pako/pako_deflate.js"></script>-->
-    <!--<script src="UPNG.js"></script>-->
     <script async src="deps/crc32.js"></script>
     <script async type="module" src="./blazer.js"></script>
+    
+    <!-- styling -->
     <style>
+        html {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            font-size: clamp(0.333rem, 1vw, 1rem);
+
+            background-color: #FFFFFF;
+            background-image:  linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
+            background-size: 20px 20px;
+        }
+
         img, picture, source {
             -webkit-user-select: none;
             -khtml-user-select: none;
@@ -19,34 +33,49 @@
             -o-user-drag: none;
             user-drag: none;
         }
+
+        
     </style>
 </head>
 <body>
 
 <div style="display: grid; grid-template-columns: minmax(min-content, 50%) minmax(min-content, 50%); max-width: 100%;">
-    <div style="display: inline-block;">
+    <div style="display: inline-block; padding: 1rem;">
         <h1>PNG image format, True-color</h1>
-        <div>Lossless only (221 kb)</div>
+        <div>Lossless only (221 kb)</div><br/>
         <img loading="lazy" decoding="async" src="./img/test.png" alt="PNG-image" style="max-width: 100%;"/>
     </div>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; padding: 1rem;">
         <h1>PNG image format, 8-bit</h1>
-        <div>Optimized to 8-bit, compressed (46.7 kb)</div>
+        <div>Optimized to 8-bit, compressed (46.7 kb)</div><br/>
         <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image" style="max-width: 100%;"/>
     </div>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; padding: 1rem;">
+        <h1>WebP image format, Lossless</h1>
+        <div>Lossless only (151 kb)</div><br/>
+        <img loading="lazy" decoding="async" src="./img/test-l.webp" alt="WebP-image" style="max-width: 100%;"/>
+    </div>
+
+    <div style="display: inline-block; padding: 1rem;">
         <h1>WebP image format, Lossy</h1>
-        <div>Alpha lossless, main quality 90, sampling 4:2:0 (74.7 kb)</div>
-        <div>(Honestly, isn't better quality)</div>
+        <div>Alpha lossless, main quality 90, sampling 4:2:0 (74.7 kb)</div><br/>
         <img loading="lazy" decoding="async" src="./img/test.webp" alt="WebP-image" style="max-width: 100%;"/>
     </div>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; padding: 1rem;">
+        <h1>JPEG image format</h1>
+        <div>Alpha replaced by white background, sampling 4:4:4 (48.4 kb)</div><br/>
+        <img loading="lazy" decoding="async" src="./img/test.jpg" alt="JPEG-image" style="max-width: 100%;"/>
+    </div>
+
+    <div style="display: inline-block; padding: 1rem;">
         <h1>JNG image format</h1>
-        <div>Alpha quality 90, main quality 90, sampling 4:4:4 (93.8 kb)</div>
-        <div>Opened with special library and polyfill, context menu not supported... <br/> DO NOT SAVE! It's generated as PNG from JNG image file in browser.</div>
+        <div>Alpha quality 80, main quality 80, sampling 4:4:4 (65.9 kb)</div>
+        <div>Opened with special library and polyfill, context menu not supported... <br/> DO NOT SAVE! It's generated as PNG from JNG image file in browser.</div><br/>
+        
+        
         <picture>
             <source is="source-jng" type="image/x-jng" srcjng="./img/test.jng" srcset="./img/test-8.png" alt="JNG-image"/>
             <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image" style="max-width: 100%;"/>
