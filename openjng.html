@@ -6,7 +6,7 @@
     <script async src="deps/crc32.js"></script>
     <script async type="module" src="./blazer.js"></script>
     <style>
-        img {
+        img, picture, source {
             -webkit-user-select: none;
             -khtml-user-select: none;
             -moz-user-select: none;
@@ -47,7 +47,15 @@
         <h1>JNG image format</h1>
         <div>Alpha quality 90, main quality 90, sampling 4:4:4 (93.8 kb)</div>
         <div>Opened with special library and polyfill, context menu not supported... <br/> DO NOT SAVE! It's generated as PNG from JNG image file in browser.</div>
-        <img loading="lazy" decoding="async" is="img-jng" src-jng="./img/test.jng" alt="JNG-image" style="max-width: 100%;"/>
+        <picture>
+            <source is="source-jng" type="image/x-jng" srcjng="./img/test.jng" srcset="./img/test-8.png" alt="JNG-image"/>
+            <img loading="lazy" decoding="async" src="./img/test-8.png" alt="PNG-image" style="max-width: 100%;"/>
+        </picture>
+
+        <!--<picture>
+            <img is="img-jng" loading="lazy" decoding="async" src="./img/test-8.png" srcjng="./img/test.jng" alt="JNG-image" style="max-width: 100%;"/>
+            <source type="image/png" srcset="./img/test-8.png" alt="PNG-image"/>
+        </picture>-->
     </div>
 </div>
 
