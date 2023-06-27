@@ -5,8 +5,31 @@
     Competitor of Normalize CSS, but for developers and modern browsers.
 */
 
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 100%;
+
+    /* */
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    right: auto;
+
+    /* use overlay scroll-bars library */
+    overflow: hidden;
+
+    /* Disable transition by default */
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+
 :root {
     --content: auto;
+    --display: inline-block;
 }
 
 .hardware, img, canvas, video, svg, picture {
@@ -28,32 +51,12 @@
     -ms-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
 
-    /* Some filter hack */
-    --content: auto;
-    filter: grayscale(0%);
-    content: var(--content);
-}
-
-* {
-    box-sizing: border-box;
-    max-width: 100%;
-    max-height: 100%;
-
     /* */
-    position: relative;
-    top: auto;
-    left: auto;
-    bottom: auto;
-    right: auto;
+    --content: auto;
+    content: var(--content);
 
-    /* use overlay scroll-bars library */
-    overflow: hidden;
-
-    /* Disable transition by default */
-    -webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
-    transition: none;
+    /* Some filter hack */
+    filter: grayscale(0%);
 }
 
 html {
@@ -105,7 +108,7 @@ div, span, a, p {
 }
 
 /* Correct behaviour of images, videos, canvas */
-img, video, canvas {
+img, video, canvas, svg {
     display: inline-block;
     box-sizing: border-box;
     width: max-content;
@@ -147,6 +150,10 @@ img, video, canvas {
     /* */
     --display: inline-block;
     display: var(--display);
+
+    /* */
+    --content: auto;
+    content: var(--content);
 }
 
 /* */
