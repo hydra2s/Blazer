@@ -138,3 +138,7 @@ img:not([src]), img[src=""] {
     content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
 }
 
+/* don't make blocks from selective tags */
+a, span {
+    display: contents;
+}
