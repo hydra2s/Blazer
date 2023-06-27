@@ -98,6 +98,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.loading = "eager";
                     self.decoding = "async";
                     self.async = true;
+                    self.draggable = false;
 
                     // 
                     try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
@@ -187,6 +188,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.loading = "eager";
                     self.decoding = "async";
                     self.async = true;
+                    self.draggable = false;
 
                     // 
                     try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};

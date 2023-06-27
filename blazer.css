@@ -1,0 +1,116 @@
+/* 
+    B.L.A.Z.E.R. CSS CORE LIBRARY!
+    Status: WIP!
+    Description: Fix some CSS issues, make boilerplate, add some security into web-page.
+    Competitor of Normalize CSS, but for developers and modern browsers.
+*/
+
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+
+    /* use overlay scroll-bars library */
+    overflow: hidden;
+}
+
+html {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: clamp(0.333rem, 1vw, 1rem);
+
+    /* */
+    min-width: 100vw;
+    min-height: 100vh;
+
+    /* */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    /* optional */
+    background-color: #FFFFFF;
+    background-image:  linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
+    background-size: 20px 20px;
+    
+    /* */
+    min-width: 100vw;
+    min-height: 100vh;
+
+    /* */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+div, span, a, p {
+    /* */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    /* */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+img, video, canvas {
+    display: inline-block;
+    box-sizing: border-box;
+    width: max-content;
+    height: max-content;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    object-position: center;
+
+    /* */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    /* */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+
+    /* protect from naive saving */
+    pointer-events: none;
+
+    /* */
+    image-rendering: smooth;
+    image-rendering: high-quality;
+    image-rendering: optimizeQuality;
+    image-orientation: from-image;
+
+    /* */
+    line-height: 0;
+    font-size: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* */
+picture {
+    display: contents;
+    line-height: 0;
+    font-size: 0;
+}
+
+/* */
+img:not([src]), img[src=""] {
+    display: none;
+    content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+}
+

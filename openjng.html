@@ -8,49 +8,23 @@
     <title>JNG testing</title>
     <script async src="deps/crc32.js"></script>
     <script async type="module" src="./blazer.js"></script>
-    
+
+    <!-- CSS library -->
+    <link rel="preload" href="blazer.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="blazer.css"></noscript>
+
+    <!-- Overlay scrollbars -->
+    <link rel="preload" href="./overlayscrollbars/styles/overlayscrollbars.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="./overlayscrollbars/styles/overlayscrollbars.css"></noscript>
+    <!--<script async type="module" src="./overlayscrollbars/overlayscrollbars.browser.es6.js"></script>-->
+
+    <script async type="module">
+        import {  OverlayScrollbars } from './overlayscrollbars/overlayscrollbars.esm.js';
+        OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
+    </script>
+
     <!-- styling -->
     <style>
-        picture {
-            max-width: 100%;
-            max-height: 100%;
-            width: max-content;
-            height: max-content;
-            display: contents;
-        }
-
-        picture img {
-            max-width: 100%;
-            max-height: 100%;
-            width: max-content;
-            height: max-content;
-            display: inline-block;
-        }
-
-        html {
-            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-            font-size: clamp(0.333rem, 1vw, 1rem);
-
-            background-color: #FFFFFF;
-            background-image:  linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
-            background-size: 20px 20px;
-        }
-        
-
-        img, picture, source {
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -o-user-select: none;
-            user-select: none;
-
-            -webkit-user-drag: none;
-            -khtml-user-drag: none;
-            -moz-user-drag: none;
-            -o-user-drag: none;
-            user-drag: none;
-        }
-
         .grid-2 {
             padding: 1rem;
             gap: 1rem;
