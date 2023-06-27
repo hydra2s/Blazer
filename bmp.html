@@ -40,6 +40,7 @@
         //
         let canvas = await new OffscreenCanvas(512, 512);
         let ctx = await canvas.getContext("2d", { willReadFrequently: true });
+        console.log(ctx);
         ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
         ctx.fillRect(64, 64, 128, 128);
 
