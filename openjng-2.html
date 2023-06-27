@@ -18,6 +18,9 @@
     <noscript><link rel="stylesheet" href="./overlayscrollbars/styles/overlayscrollbars.css"></noscript>
     <!--<script async type="module" src="./overlayscrollbars/overlayscrollbars.browser.es6.js"></script>-->
 
+    <!-- Development version -->
+    <script async src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" crossorigin="anonymous"></script>
+
     <script async type="module">
         import {  OverlayScrollbars } from './overlayscrollbars/overlayscrollbars.esm.js';
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
@@ -32,12 +35,15 @@
             grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); 
             width: 100%; 
             box-sizing: border-box;
+            text-align: center;
+            align-self: center;
         }
 
         .grid-2 img {
             width: 100%;
             max-width: max-content;
             box-sizing: border-box;
+            align-self: center;
         }
         
         .grid-3 {
@@ -47,71 +53,74 @@
             grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr) minmax(min-content, 1fr); 
             width: 100%; 
             box-sizing: border-box;
+            text-align: center;
+            align-self: center;
         }
 
         .grid-3 img {
             width: 100%;
             max-width: max-content;
             box-sizing: border-box;
+            align-self: center;
         }
         
     </style>
 </head>
 <body>
 
-<div style="display: grid; gap: 1rem; grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); width: 100%; box-sizing: border-box;">
+<div style="text-align: center; display: grid; gap: 1rem; grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); width: 100%; box-sizing: border-box;">
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
         <h1>JNG image test (small)</h1>
         
         <div>  </div><br/>
         <div class="grid-3">
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGPA1S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGOA1S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGBA1S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGOA1S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBA1S.jng" alt="JNG-image"/>
 
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCPA8S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCOA8S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCBA8S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCOA8S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBA8S.jng" alt="JNG-image"/>
 
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGPN0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGON0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGBN0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGON0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBN0S.jng" alt="JNG-image"/>
 
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCPN0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCON0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCBN0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCON0S.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBN0S.jng" alt="JNG-image"/>
         </div>
     </div>
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
         <h1>JNG image test (large)</h1>
 
         <div>  </div><br/>
         <div class="grid-2">
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGPA1L.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCPA8L.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TGPN0L.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./jng/TCPN0L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0L.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0L.jng" alt="JNG-image"/>
         </div>
     </div>
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
         <h1>JNG image test (opossum, other)</h1>
 
         <div>  </div><br/>
         <div class="grid-3">
-            <img is="img-jng" loading="lazy" decoding="async" src="./img/opossum.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/opossum.jng" alt="JNG-image"/>
         </div>
     </div>
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box;">
+    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
         <h1>JNG image test (glenn)</h1>
 
         <div>  </div><br/>
         <div class="grid-2">
-            <img is="img-jng" loading="lazy" decoding="async" src="./img/glenn99p.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" src="./img/glenn99.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99p.jng" alt="JNG-image"/>
+            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99.jng" alt="JNG-image"/>
         </div>
     </div>
 

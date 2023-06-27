@@ -62,7 +62,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 //
                 this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
-                this._loadJNG(this.getAttribute("src"));
+                this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
                     // activate a JNG image
                     this._src = typeof this._src == "function" ? this._src() : this._src;
@@ -120,20 +120,20 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
             connectedCallback() {
                 this.src ||= this._empty;
-                this._loadJNG(this.getAttribute("src"));
+                this._loadJNG(this.getAttribute("srcjng"));
                 this._observer.observe(this);
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
                 console.log(newValue);
                 console.log(this._empty);
-                if (name == "src" && oldValue != newValue && newValue != this._empty) {
+                if (name == "srcjng" && oldValue != newValue && newValue != this._empty) {
                     this._loadJNG(newValue);
                 }
             }
 
             static get observedAttributes() {
-                return ['src'];
+                return ['srcjng'];
             }
         }, { extends: "img" });
     } catch(e) {};
