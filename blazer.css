@@ -18,7 +18,9 @@
     right: auto;
 
     /* use overlay scroll-bars library */
+    overflow: overlay;
     overflow: hidden;
+    scrollbar-gutter: auto;
 
     /* Disable transition by default */
     -webkit-transition: none;
@@ -57,6 +59,10 @@
 
     /* Some filter hack */
     filter: grayscale(0%);
+
+    /*  */
+    overflow: hidden;
+    scrollbar-gutter: auto;
 }
 
 html {
@@ -154,6 +160,10 @@ img, video, canvas, svg {
     /* */
     --content: auto;
     content: var(--content);
+
+    /*  */
+    overflow: hidden;
+    scrollbar-gutter: auto;
 }
 
 /* */
