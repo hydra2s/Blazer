@@ -68,8 +68,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 //
                 (this._empty = `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`);
                 this.src ||= this._empty;
-                this.style.setProperty("--display", "none", "");
-                this.addEventListener("error", ()=> { this.src = this._empty; this.style.setProperty("--display", "none", ""); });
+                //this.style.setProperty("--display", "none", "");
+                this.addEventListener("error", ()=> { /*this.src = this._empty; this.style.setProperty("--display", "none", "");*/ });
                 this.addEventListener("load", ()=> { this.style.removeProperty("--display"); if (this.src != this._empty) { this.style.removeProperty("--content"); }});
 
                 //
@@ -98,8 +98,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 
                 // use lazy loading
-                self.loading = "lazy";
+                //self.loading = "lazy";
                 self.decoding = "async";
+                self.src = _value;
 
                 // for observer
                 this._src = (async ()=>{
@@ -122,6 +123,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     //
                     return this.src;
                 });
+
+                //
+                if (self.loading != "lazy") { this._src = typeof this._src == "function" ? this._src() : this._src; };
 
                 //
                 return this; 
@@ -171,8 +175,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 
                 //
                 const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
-                self.style.setProperty("--display", "none", "");
-                self.addEventListener("error", ()=> { self.src = this._empty; self.style.setProperty("--display", "none", ""); });
+                //self.style.setProperty("--display", "none", "");
+                self.addEventListener("error", ()=> { /*self.src = this._empty; self.style.setProperty("--display", "none", "");*/ });
                 self.addEventListener("load", ()=> { self.style.removeProperty("--display"); if (this.srcset != this._empty) { self.style.removeProperty("--content"); }});
             }
 
@@ -189,8 +193,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 
                 // use lazy loading
-                self.loading = "lazy";
+                //self.loading = "lazy";
                 self.decoding = "async";
+                this.srcset = _value;
                 
                 // for observer
                 this._src = (async ()=>{
@@ -213,6 +218,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     //
                     return this.srcset;
                 });
+
+                //
+                if (self.loading != "lazy") { this._src = typeof this._src == "function" ? this._src() : this._src; };
 
                 //
                 return this;

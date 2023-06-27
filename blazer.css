@@ -5,6 +5,11 @@
     Competitor of Normalize CSS, but for developers and modern browsers.
 */
 
+:root {
+    --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+    --display: inline-block;
+}
+
 .hardware, img, canvas, video, svg, picture, embed, object 
 {
     /* Multi-Layering purpose default */
@@ -93,11 +98,6 @@
     -moz-transition: none;
     -o-transition: none;
     transition: none;
-}
-
-:root {
-    --content: auto;
-    --display: inline-block;
 }
 
 html {
@@ -244,11 +244,11 @@ img, video, canvas, svg, embed, object {
     padding: 0;
 
     /* */
+    --content: auto;
     --display: inline-block;
-    display: var(--display);
 
     /* */
-    --content: auto;
+    display: var(--display);
     content: var(--content);
 
     /*  */
@@ -264,9 +264,17 @@ picture {
 }
 
 /* */
-img:not([src]), img[src=""], img[src$=".jng"] {
-    --display: none;
-    content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+img:not([src]), img[src=""] {
+    /*--display: none;*/
+    --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+    content-visibility: hidden;
+    content: var(--content);
+}
+
+/* */
+img[src$=".jng"] {
+    --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
+    content: var(--content);
 }
 
 /* don't make blocks from selective tags */
