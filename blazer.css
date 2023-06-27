@@ -34,7 +34,7 @@
     --display: inline-block;
 }
 
-.hardware, img, canvas, video, svg, picture {
+.hardware, img, canvas, video, svg, picture, embed, object {
     /* */
     background-color: transparent;
 
@@ -118,7 +118,7 @@ div, span, a, p {
 }
 
 /* Correct behaviour of images, videos, canvas */
-img, video, canvas, svg {
+img, video, canvas, svg, embed, object {
     /* */
     background-color: transparent;
 
