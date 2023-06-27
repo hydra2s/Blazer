@@ -5,45 +5,8 @@
     Competitor of Normalize CSS, but for developers and modern browsers.
 */
 
+/*.hardware, img, canvas, video, svg, picture, embed, object */
 * {
-    /* Multi-Layering purpose default */
-    background-clip: content-box;
-    background-origin: content-box;
-    background-position: center center;
-    background-attachment: local;
-    background-repeat: no-repeat;
-    background-size: contain;
-
-    /* */
-    box-sizing: border-box;
-    max-width: 100%;
-    max-height: 100%;
-
-    /* */
-    position: relative;
-    top: auto;
-    left: auto;
-    bottom: auto;
-    right: auto;
-
-    /* use overlay scroll-bars library */
-    overflow: overlay;
-    overflow: hidden;
-    scrollbar-gutter: auto;
-
-    /* Disable transition by default */
-    -webkit-transition: none;
-    -moz-transition: none;
-    -o-transition: none;
-    transition: none;
-}
-
-:root {
-    --content: auto;
-    --display: inline-block;
-}
-
-.hardware, img, canvas, video, svg, picture, embed, object {
     /* Multi-Layering purpose default */
     background-clip: content-box;
     background-origin: content-box;
@@ -89,10 +52,51 @@
     /*  */
     overflow: hidden;
     scrollbar-gutter: auto;
+    scrollbar-width: none;
 
     /* */
     object-fit: contain;
     object-position: center;
+}
+
+* {
+    /* Multi-Layering purpose default */
+    background-clip: content-box;
+    background-origin: content-box;
+    background-position: center center;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    /* */
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 100%;
+
+    /* */
+    position: relative;
+    top: auto;
+    left: auto;
+    bottom: auto;
+    right: auto;
+
+    /* use overlay scroll-bars library */
+    overflow: auto;
+    overflow: overlay;
+    scrollbar-gutter: auto;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+
+    /* Disable transition by default */
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+
+:root {
+    --content: auto;
+    --display: inline-block;
 }
 
 html {
@@ -111,6 +115,9 @@ html {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+
+    /* */
+    overflow-x: hidden;
 }
 
 body {
@@ -134,6 +141,9 @@ body {
 
     /* */
     text-align: center;
+
+    /* */
+    overflow-x: hidden;
 }
 
 /* Default-ness */
