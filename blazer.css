@@ -109,8 +109,11 @@ body {
     text-align: center;
 }
 
-body > * {
+/* Default-ness */
+body > div, body > p {
     text-align: left;
+    width: max-content;
+    display: inline-block;
 }
 
 /* Protect from naive copy or selection */
