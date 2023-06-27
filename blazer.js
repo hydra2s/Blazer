@@ -100,7 +100,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.async = true;
 
                     // 
-                    try { this._jng ||= this._class.then((C)=>new C()); } catch(e) {};
+                    try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
                     try { this.src = await this._jng.load(_value).then(URL.createObjectURL); } catch(e) {};
 
                     // ban actions by default
@@ -189,8 +189,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.async = true;
 
                     // 
-                    try { this._jng ||= this._class.then((C)=>new C()); } catch(e) {};
-                    try { this.srcset = await this._jng.load(_value).then(URL.createObjectURL); } catch(e) {};
+                    try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
+                    try { this.srcset = await this._jng.load(_value).then(URL.createObjectURL); this.type = "image/png"; } catch(e) {};
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
