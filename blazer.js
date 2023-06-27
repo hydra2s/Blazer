@@ -45,11 +45,23 @@ if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && se
 export { WorkerLib };
 
 // 
+let JNGImage = {}; 
 if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)) {
+
+    //const _WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
+    const _TW = new Array(Math.min(navigator.hardwareConcurrency || 4, 8)).fill({ counter: 0 }).map((I)=>({
+        ...I, worker: new InterWork(new Worker("./blazer.js", {type: "module"}), true),
+    }));
+
+    //
+    const _WC = () => { // Penta-cure formula
+        const _LESS = _TW[_TW.findIndex((E)=>(E.counter == Math.min(..._TW.map((I)=>I.counter))))];
+        _LESS.counter++; return _LESS;
+    };
 
     // TODO: new Image class
     try {
-        customElements.define("img-jng", class JNGImage extends HTMLImageElement {
+        customElements.define("img-jng", JNGImage = class extends HTMLImageElement {
             constructor() {
                 super();
 
@@ -61,7 +73,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this.addEventListener("load", ()=> { this.style.removeProperty("--display"); if (this.src != this._empty) { this.style.removeProperty("--content"); }});
 
                 //
-                this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
                     // activate a JNG image
@@ -71,18 +82,21 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     rootMargin: "0px",
                     threshold: 0.0,
                 });
-                this._class = this._WC.proxy("default")["OpenJNG"];
+                
             }
 
             _loadJNG(_value) {
+                if (!_value) return this; 
+
+                //
+                this._jng = (this._thread = _WC()).worker.proxy("default")["OpenJNG"].then((C)=>new C());
+                const self = this;
+
+                //
                 if (this._prevent) {
                     this.removeEventListener("contextmenu", this._prevent);
                     this.removeEventListener("dragstart", this._prevent);
                 }
-
-                //
-                if (!_value) return this; 
-                const self = this;
 
                 // use lazy loading
                 self.loading = "lazy";
@@ -99,8 +113,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.draggable = false;
 
                     // 
-                    try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
                     try { self.style.setProperty('--content', `url("${await this._jng.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
+                    this._thread.counter--;
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
@@ -125,8 +139,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
-                console.log(newValue);
-                console.log(this._empty);
                 if (name == "srcjng" && oldValue != newValue && newValue != this._empty) {
                     this._loadJNG(newValue);
                 }
@@ -146,7 +158,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 //
                 (this._empty = `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`);
                 this.srcset ||= this._empty;
-                this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
+
+                //
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
                     // activate a JNG image
@@ -156,8 +169,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     rootMargin: "0px",
                     threshold: 0.0,
                 });
-                this._class = this._WC.proxy("default")["OpenJNG"];
-
+                
                 //
                 const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
                 self.style.setProperty("--display", "none", "");
@@ -166,9 +178,10 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             _loadJNG(_value) {
-                if (!_value) return this; 
+                if (!_value) return this;
 
                 //
+                this._jng = (this._thread = _WC()).worker.proxy("default")["OpenJNG"].then((C)=>new C());
                 const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
 
                 //
@@ -192,8 +205,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.draggable = false;
 
                     // 
-                    try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
                     try { self.style.setProperty('--content', `url("${await this._jng.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
+                    this._thread.counter--;
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
@@ -231,3 +244,4 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
 }
 
+export { JNGImage };
