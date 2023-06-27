@@ -54,16 +54,15 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 super();
 
                 //
-                this.src ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
-
-                //
-                this.style.setProperty("display", "none", "");
-                this.addEventListener("error", ()=> this.style.setProperty("display", "none", ""));
-                this.addEventListener("load", ()=> this.style.removeProperty("display"));
+                (this._empty = `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`);
+                this.src ||= this._empty;
+                this.style.setProperty("--display", "none", "");
+                this.addEventListener("error", ()=> { this.src = this._empty; this.style.setProperty("--display", "none", ""); });
+                this.addEventListener("load", ()=> { this.style.removeProperty("--display"); if (this.src != this._empty) { this.style.removeProperty("--content"); }});
 
                 //
                 this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
-                this._loadJNG(this.getAttribute("srcjng"));
+                this._loadJNG(this.getAttribute("src"));
                 this._observer = new IntersectionObserver(()=>{
                     // activate a JNG image
                     this._src = typeof this._src == "function" ? this._src() : this._src;
@@ -73,7 +72,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     threshold: 0.0,
                 });
                 this._class = this._WC.proxy("default")["OpenJNG"];
-                
             }
 
             _loadJNG(_value) {
@@ -102,7 +100,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                     // 
                     try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
-                    try { this.src = await this._jng.load(_value).then(URL.createObjectURL); } catch(e) {};
+                    try { self.style.setProperty('--content', `url("${await this._jng.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
@@ -121,19 +119,21 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                this.src ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
-                this._loadJNG(this.getAttribute("srcjng"));
+                this.src ||= this._empty;
+                this._loadJNG(this.getAttribute("src"));
                 this._observer.observe(this);
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
-                if (name == "srcjng" && oldValue != newValue) {
+                console.log(newValue);
+                console.log(this._empty);
+                if (name == "src" && oldValue != newValue && newValue != this._empty) {
                     this._loadJNG(newValue);
                 }
             }
 
             static get observedAttributes() {
-                return ['srcjng'];
+                return ['src'];
             }
         }, { extends: "img" });
     } catch(e) {};
@@ -144,7 +144,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 super();
 
                 //
-                this.srcset ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
+                (this._empty = `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`);
+                this.srcset ||= this._empty;
                 this._WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
@@ -159,9 +160,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 //
                 const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
-                self.style.setProperty("display", "none", "");
-                self.addEventListener("error", ()=> self.style.setProperty("display", "none", ""));
-                self.addEventListener("load", ()=> self.style.removeProperty("display"));
+                self.style.setProperty("--display", "none", "");
+                self.addEventListener("error", ()=> { self.src = this._empty; self.style.setProperty("--display", "none", ""); });
+                self.addEventListener("load", ()=> { self.style.removeProperty("--display"); if (this.srcset != this._empty) { self.style.removeProperty("--content"); }});
             }
 
             _loadJNG(_value) {
@@ -192,7 +193,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                     // 
                     try { this._jng ||= await this._class.then((C)=>new C()); } catch(e) {};
-                    try { this.srcset = await this._jng.load(_value).then(URL.createObjectURL); this.type = "image/png"; } catch(e) {};
+                    try { self.style.setProperty('--content', `url("${await this._jng.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
@@ -211,13 +212,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                this.srcset ||= `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`;
+                this.srcset ||= this._empty;
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer.observe(this.parentNode?.querySelector("img") || this.parentNode || this);
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
-                if (name == "srcjng" && oldValue != newValue) {
+                if (name == "srcjng" && oldValue != newValue && newValue != this._empty) {
                     this._loadJNG(newValue);
                 }
             }

@@ -5,6 +5,10 @@
     Competitor of Normalize CSS, but for developers and modern browsers.
 */
 
+:root {
+    --content: auto;
+}
+
 .hardware, img, canvas, video, svg, picture {
     /* */
     -webkit-backface-visibility: hidden;
@@ -25,7 +29,9 @@
     transform: translate3d(0, 0, 0);
 
     /* Some filter hack */
+    --content: auto;
     filter: grayscale(0%);
+    content: var(--content);
 }
 
 * {
@@ -137,6 +143,10 @@ img, video, canvas {
     font-size: 0;
     margin: 0;
     padding: 0;
+
+    /* */
+    --display: inline-block;
+    display: var(--display);
 }
 
 /* */
@@ -147,8 +157,8 @@ picture {
 }
 
 /* */
-img:not([src]), img[src=""] {
-    display: none;
+img:not([src]), img[src=""], img[src$=".jng"] {
+    --display: none;
     content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
 }
 
@@ -160,9 +170,9 @@ a, span {
 }
 
 body > .os-scrollbar-vertical {
-    height: min(100%, 100vh);
+    max-height: min(100%, 100vh);
 }
 
 body > .os-scrollbar-horizontal {
-    width: min(100%, 100vw);
+    max-width: min(100%, 100vw);
 }
