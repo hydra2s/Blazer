@@ -6,6 +6,15 @@
 */
 
 * {
+    /* Multi-Layering purpose default */
+    background-clip: content-box;
+    background-origin: content-box;
+    background-position: center center;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    /* */
     box-sizing: border-box;
     max-width: 100%;
     max-height: 100%;
@@ -35,6 +44,14 @@
 }
 
 .hardware, img, canvas, video, svg, picture, embed, object {
+    /* Multi-Layering purpose default */
+    background-clip: content-box;
+    background-origin: content-box;
+    background-position: center center;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-size: cover;
+
     /* Layering support */
     top: 0;
     left: 0;
@@ -93,8 +110,10 @@ html {
 body {
     /* optional */
     background-color: transparent;
-    background-image:  linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
+    background-image: linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
     background-size: 2rem 2rem;
+    background-repeat: repeat;
+    background-position: left top;
     
     /* */
     min-width: 100vw;
@@ -135,6 +154,14 @@ div, span, a, p {
 
 /* Correct behaviour of images, videos, canvas */
 img, video, canvas, svg, embed, object {
+    /* Multi-Layering purpose default */
+    background-clip: content-box;
+    background-origin: content-box;
+    background-position: center center;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-size: cover;
+
     /* Layering support */
     top: 0;
     left: 0;
