@@ -88,9 +88,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             _loadJNG(_value) {
                 if (!_value) return this; 
 
-                //
-                this._jng = (this._thread = _WC()).worker.proxy("default")["OpenJNG"].then((C)=>new C());
-                const self = this;
+                // TODO: WeakRef support by InterCom
+                const thread = _WC(), self = this, instance = thread.worker.proxy("default")["OpenJNG"].then((C)=>new C());
 
                 //
                 if (this._prevent) {
@@ -113,8 +112,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.draggable = false;
 
                     // 
-                    try { self.style.setProperty('--content', `url("${await this._jng.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
-                    this._thread.counter--;
+                    try { self.style.setProperty('--content', `url("${await instance.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
+                    thread.counter--;
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
@@ -180,9 +179,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             _loadJNG(_value) {
                 if (!_value) return this;
 
-                //
-                this._jng = (this._thread = _WC()).worker.proxy("default")["OpenJNG"].then((C)=>new C());
-                const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
+                // TODO: WeakRef support by InterCom
+                const thread = _WC(), self = (this.parentNode?.querySelector("img") || this.parentNode || this), instance = thread.worker.proxy("default")["OpenJNG"].then((C)=>new C());
 
                 //
                 if (this._prevent) {
@@ -205,8 +203,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.draggable = false;
 
                     // 
-                    try { self.style.setProperty('--content', `url("${await this._jng.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
-                    this._thread.counter--;
+                    try { self.style.setProperty('--content', `url("${await instance.load(_value).then(URL.createObjectURL)}")`); self.style.removeProperty("--display"); } catch(e) {};
+                    thread.counter--;
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
