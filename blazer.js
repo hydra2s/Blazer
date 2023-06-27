@@ -67,7 +67,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 //
                 (this._empty = `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`);
-                this.src ||= this._empty;
+                //this.src ||= this._empty;
                 //this.style.setProperty("--display", "none", "");
                 this.addEventListener("error", ()=> { /*this.src = this._empty; this.style.setProperty("--display", "none", "");*/ });
                 this.addEventListener("load", ()=> { this.style.removeProperty("--display"); if (this.src != this._empty) { this.style.removeProperty("--content"); }});
@@ -100,7 +100,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 // use lazy loading
                 //self.loading = "lazy";
                 self.decoding = "async";
-                self.src = _value;
+                self.src ||= _value;
 
                 // for observer
                 this._src = (async ()=>{
@@ -136,7 +136,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                this.src ||= this._empty;
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer.observe(this);
             }
@@ -160,9 +159,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 //
                 (this._empty = `data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=`);
-                this.srcset ||= this._empty;
-
-                //
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer = new IntersectionObserver(()=>{
                     // activate a JNG image
@@ -195,7 +191,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 // use lazy loading
                 //self.loading = "lazy";
                 self.decoding = "async";
-                this.srcset = _value;
+                this.srcset ||= _value;
                 
                 // for observer
                 this._src = (async ()=>{
@@ -231,7 +227,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                this.srcset ||= this._empty;
                 this._loadJNG(this.getAttribute("srcjng"));
                 this._observer.observe(this.parentNode?.querySelector("img") || this.parentNode || this);
             }

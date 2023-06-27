@@ -269,6 +269,7 @@ img:not([src]), img[src=""] {
     --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
     content-visibility: hidden;
     content: var(--content);
+    width: 0px; height: 0px;
 }
 
 /* */
