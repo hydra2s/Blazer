@@ -72,7 +72,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     rootMargin: "0px",
                     threshold: 0.0,
                 });
-
+                this._class = this._WC.proxy("default")["OpenJNG"];
                 
             }
 
@@ -99,9 +99,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.decoding = "async";
                     self.async = true;
 
-                    //this._src = typeof this._src == "function" ? this._src() : this._src;
-                    try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
-                    try { this.src = URL.createObjectURL(await this._jng.load(_value)); } catch(e) {};
+                    // 
+                    try { this._jng ||= this._class.then((C)=>new C()); } catch(e) {};
+                    try { this.src = await this._jng.load(_value).then(URL.createObjectURL); } catch(e) {};
 
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
@@ -154,6 +154,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     rootMargin: "0px",
                     threshold: 0.0,
                 });
+                this._class = this._WC.proxy("default")["OpenJNG"];
 
                 //
                 const self = (this.parentNode?.querySelector("img") || this.parentNode || this);
@@ -187,10 +188,10 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     self.decoding = "async";
                     self.async = true;
 
-                    //this._src = typeof this._src == "function" ? this._src() : this._src;
-                    try { this._jng ||= await new ((await this._WC.proxy("default"))["OpenJNG"])(); } catch(e) {};
-                    try { this.srcset = URL.createObjectURL(await this._jng.load(_value)); this.type = "image/png"; } catch(e) {};
-                    
+                    // 
+                    try { this._jng ||= this._class.then((C)=>new C()); } catch(e) {};
+                    try { this.srcset = await this._jng.load(_value).then(URL.createObjectURL); } catch(e) {};
+
                     // ban actions by default
                     self.addEventListener("contextmenu", this._prevent ||= (e)=>{ e.preventDefault(); }, true);
                     self.addEventListener("dragstart", this._prevent, true);
