@@ -36,6 +36,9 @@
 
 .hardware, img, canvas, video, svg, picture {
     /* */
+    background-color: transparent;
+
+    /* */
     -webkit-backface-visibility: hidden;
     -moz-backface-visibility: hidden;
     -ms-backface-visibility: hidden;
@@ -67,6 +70,7 @@
 
 html {
     /* Better font mod by default */
+    background-color: transparent;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: clamp(0.333rem, 1vw, 1rem);
 
@@ -82,7 +86,7 @@ html {
 
 body {
     /* optional */
-    background-color: #FFFFFF;
+    background-color: transparent;
     background-image:  linear-gradient(#F0F0F0 1px, transparent 1px), linear-gradient(to right, #F0F0F0 1px, #FFFFFF 1px);
     background-size: 2rem 2rem;
     
@@ -115,6 +119,10 @@ div, span, a, p {
 
 /* Correct behaviour of images, videos, canvas */
 img, video, canvas, svg {
+    /* */
+    background-color: transparent;
+
+    /* */
     display: inline-block;
     box-sizing: border-box;
     width: max-content;
