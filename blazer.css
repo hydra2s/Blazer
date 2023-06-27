@@ -89,6 +89,10 @@
     /*  */
     overflow: hidden;
     scrollbar-gutter: auto;
+
+    /* */
+    object-fit: contain;
+    object-position: center;
 }
 
 html {
@@ -98,6 +102,8 @@ html {
     font-size: clamp(0.333rem, 1vw, 1rem);
 
     /* */
+    width: 100vw;
+    max-width: 100vw;
     min-width: 100vw;
     min-height: 100vh;
 
@@ -116,6 +122,8 @@ body {
     background-position: left top;
     
     /* */
+    width: 100vw;
+    max-width: 100vw;
     min-width: 100vw;
     min-height: 100vh;
 
@@ -150,6 +158,20 @@ div, span, a, p {
     -moz-user-drag: none;
     -o-user-drag: none;
     user-drag: none;
+}
+
+.background {
+    /* Multi-Layering purpose default */
+    background-clip: content-box;
+    background-origin: content-box;
+    background-position: center center;
+    background-attachment: local;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    /* */
+    object-fit: cover;
+    object-position: center;
 }
 
 /* Correct behaviour of images, videos, canvas */
@@ -249,4 +271,27 @@ body > .os-scrollbar-vertical {
 
 body > .os-scrollbar-horizontal {
     max-width: min(100%, 100vw);
+}
+
+
+.grid {
+    --columns: 1;
+    grid-template-columns: repeat(var(--columns), minmax(min-content, 1fr));
+    padding: 1rem;
+    gap: 1rem;
+    grid-gap: 1rem;
+    width: 100%;
+    display: grid;
+    max-width: 100%;
+    max-width: min(100%, 100vw);
+    box-sizing: border-box;
+    text-align: center;
+    align-items: start;
+    height: max-content;
+}
+
+.grid img {
+    max-height: max-content;
+    max-width: max-content;
+    width: 100%;
 }

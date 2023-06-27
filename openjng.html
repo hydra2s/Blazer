@@ -26,38 +26,10 @@
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
     </script>
 
-    <!-- styling -->
-    <style>
-        .grid-2 {
-            padding: 1rem;
-            gap: 1rem;
-            display: inline-grid; 
-            grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); 
-            width: 100%; 
-            box-sizing: border-box;
-            text-align: center;
-            align-self: center;
-        }
-
-        .grid-2 > div {
-            display: inline-block; 
-            padding: 1rem; 
-            box-sizing: border-box;
-            align-self: center;
-        }
-
-        .grid-2 img {
-            width: 100%;
-            max-width: max-content;
-            box-sizing: border-box;
-            align-self: center;
-        }
-        
-    </style>
 </head>
 <body>
 
-<div class="grid-2">
+<div class="grid" style="--columns: 2;">
     <div>
         <h1>PNG image format, True-color</h1>
         <div>Lossless only (221 kb)</div><br/>

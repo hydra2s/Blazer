@@ -26,101 +26,62 @@
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
     </script>
 
-    <!-- styling -->
-    <style>
-        .grid-2 {
-            padding: 1rem;
-            gap: 1rem;
-            display: inline-grid; 
-            grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); 
-            width: 100%; 
-            box-sizing: border-box;
-            text-align: center;
-            align-self: center;
-        }
-
-        .grid-2 img {
-            width: 100%;
-            max-width: max-content;
-            box-sizing: border-box;
-            align-self: center;
-        }
-        
-        .grid-3 {
-            padding: 1rem;
-            gap: 1rem;
-            display: inline-grid; 
-            grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr) minmax(min-content, 1fr); 
-            width: 100%; 
-            box-sizing: border-box;
-            text-align: center;
-            align-self: center;
-        }
-
-        .grid-3 img {
-            width: 100%;
-            max-width: max-content;
-            box-sizing: border-box;
-            align-self: center;
-        }
-        
-    </style>
 </head>
 <body>
 
-<div style="text-align: center; display: grid; gap: 1rem; grid-template-columns: minmax(min-content, 1fr) minmax(min-content, 1fr); width: 100%; box-sizing: border-box;">
+<div class="grid" style="--columns: 2;">
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+    <div>
         <h1>JNG image test (small)</h1>
         
         <div>  </div><br/>
-        <div class="grid-3">
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGOA1S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBA1S.jng" alt="JNG-image"/>
+        <div class="grid" style="--columns: 3;">
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGOA1S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBA1S.jng" alt="JNG-image"/></div>
 
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCOA8S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBA8S.jng" alt="JNG-image"/>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCOA8S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBA8S.jng" alt="JNG-image"/></div>
 
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGON0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBN0S.jng" alt="JNG-image"/>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGON0S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGBN0S.jng" alt="JNG-image"/></div>
 
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCON0S.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBN0S.jng" alt="JNG-image"/>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCON0S.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCBN0S.jng" alt="JNG-image"/></div>
         </div>
     </div>
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+    <div>
         <h1>JNG image test (large)</h1>
 
         <div>  </div><br/>
-        <div class="grid-2">
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1L.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8L.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0L.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0L.jng" alt="JNG-image"/>
+        <div class="grid" style="--columns: 2;">
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPA1L.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPA8L.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TGPN0L.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./jng/TCPN0L.jng" alt="JNG-image"/></div>
         </div>
     </div>
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+    <div>
         <h1>JNG image test (opossum, other)</h1>
 
         <div>  </div><br/>
-        <div class="grid-3">
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/opossum.jng" alt="JNG-image"/>
+        <div class="grid" style="--columns: 3;">
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./img/opossum.jng" alt="JNG-image"/></div>
         </div>
     </div>
 
-    <div style="display: inline-block; padding: 1rem; width: 100%; box-sizing: border-box; text-align: center;">
+    <div>
         <h1>JNG image test (glenn)</h1>
 
         <div>  </div><br/>
-        <div class="grid-2">
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99p.jng" alt="JNG-image"/>
-            <img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99.jng" alt="JNG-image"/>
+        <div class="grid" style="--columns: 2;">
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99p.jng" alt="JNG-image"/></div>
+            <div><img is="img-jng" loading="lazy" decoding="async" srcjng="./img/glenn99.jng" alt="JNG-image"/></div>
         </div>
     </div>
 
