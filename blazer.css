@@ -10,8 +10,7 @@
     --display: inline-block;
 }
 
-.hardware, img, canvas, video, svg, picture, embed, object 
-{
+.hardware, img, canvas, video, svg, picture, embed, object {
     /* Multi-Layering purpose default */
     background-clip: content-box;
     background-origin: content-box;
