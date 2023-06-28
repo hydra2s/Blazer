@@ -187,6 +187,9 @@ div, span, a, p {
 
 /* Correct behaviour of images, videos, canvas */
 img, video, canvas, svg, embed, object {
+    /* Lazy scrolling fix */
+    min-width: 1px; min-height: 1px;
+
     /* Multi-Layering purpose default */
     background-clip: content-box;
     background-origin: content-box;
@@ -269,7 +272,10 @@ img:not([src]), img[src=""] {
     --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
     content-visibility: hidden;
     content: var(--content);
-    width: 0px; height: 0px;
+
+    /* Lazy scrolling fix */
+    width: 1px; height: 1px;
+    min-width: 1px; min-height: 1px;
 }
 
 /* */
