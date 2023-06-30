@@ -38,5 +38,18 @@
         <img src="test/3.jpg" alt="IMG-3"/>
     </div>
 
+    <script>
+        // one small script to fix scrolling problems
+        document.querySelectorAll(".vbi-h").forEach((E)=>{
+            E.addEventListener("wheel", (e)=>{
+                e.preventDefault();
+
+                // abuse a scrolling bug?
+                if (e.deltaY > 0) { E.scrollBy( 10, 0); };
+                if (e.deltaY < 0) { E.scrollBy(-10, 0); };
+            });
+        });
+    </script>
+
 </body>
 </html>
