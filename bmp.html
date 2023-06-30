@@ -25,6 +25,14 @@
     </script>-->
 </head>
 <body>
+    <!-- Custom scrollbars -->
+    <!--
+        <div class="scroll-y"></div>
+        <div class="scroll-x"></div>
+    -->
+    
+    <!-- TODO: custom element instead of -->
+    <div class="scrollable">
 
     <script type="module" async>
         import {loadImage, InterWork, IDBCache} from "./blazer.js";
@@ -50,5 +58,5 @@
         
         document.body.appendChild(await loadImage(blazer.encode()));
     </script>
-</body>
+</div></body>
 </html>

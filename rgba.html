@@ -24,6 +24,14 @@
     </script>-->
 </head>
 <body>
+    <!-- Custom scrollbars -->
+    <!--
+        <div class="scroll-y"></div>
+        <div class="scroll-x"></div>
+    -->
+    
+    <!-- TODO: custom element instead of -->
+    <div class="scrollable">
 
     <script type="module" async>
         import {loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache, BlazerRGBA} from "./blazer.js";
@@ -49,5 +57,5 @@
         canvas.getContext("bitmaprenderer").transferFromImageBitmap(bitmap);
         document.body.appendChild(canvas);
     </script>
-</body>
+</div></body>
 </html>
