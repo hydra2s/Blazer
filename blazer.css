@@ -5,9 +5,26 @@
     Competitor of Normalize CSS, but for developers and modern browsers.
 */
 
+/* */
 :root {
     --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
     --display: inline-block;
+}
+
+/* Better Text Format */
+body, p, h1, h2, h3, h4, h5, h6, a, span {
+    width: max-content;
+    max-width: 100%;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    white-space: break-spaces;
+    text-align: justify;
+    padding: 0;
+    margin: 0;
+}
+
+body, h1, h2, h3, h4, h5, h6, p {
+    display: inline-block;
 }
 
 .hardware, img, canvas, video, svg, picture, embed, object {
@@ -147,6 +164,8 @@ body {
     overflow-x: hidden;
     touch-action: none;
 }
+
+
 
 /* Default-ness */
 body > div, body > p {
@@ -299,7 +318,6 @@ body > .os-scrollbar-vertical {
 body > .os-scrollbar-horizontal {
     max-width: min(100%, 100vw);
 }
-
 
 .grid {
     --columns: 1;
