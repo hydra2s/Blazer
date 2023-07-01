@@ -86,20 +86,18 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 if (x.computedStyleMap) {
                     /* TODO: support of transform-origin */
-                    const mapping = x.computedStyleMap();
-                    const computed = mapping.get("transform");
-                    //const cmOrigin = mapping.get("transform-origin");
+                    const computed = x.computedStyleMap().get("transform");
                     transform = (computed && computed.value != "none") ? computed.toMatrix() : transform;
-                    //origin = [cmOrigin.x || origin[0], cmOrigin.y || origin[1]];
                 } else {
                     try {
-                        /* TODO: support of transform-origin */
-                        const mapping = window.getComputedStyle(x, "");
-                        const computed = mapping.getPropertyValue("transform");
+                        const computed = window.getComputedStyle(x, "").getPropertyValue("transform");
                         transform = (computed && computed != "none") ? new _DOMMatrix_(computed) : transform;
-                        origin = mapping.getPropertyValue("transform-origin").split(" ").map((V)=>parseFloat(V.replace("px", ""))).map((_,i)=>_||origin[i]);
                     } catch(e) {};
                 }
+
+                try {
+                    origin = window.getComputedStyle(x, "").getPropertyValue("transform-origin").split(" ").map((V)=>parseFloat(V.replace("px", ""))).map((_,i)=>_||origin[i]);
+                } catch(e) {};
 
                 if (transform) {
                     fromNodeTransform = (new _DOMMatrix_(_identity_).translate(...origin).multiply(transform.translate(...origin.map(_=>-_)))).multiply(fromNodeTransform);
@@ -325,11 +323,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
     } catch(e) {};
 
     try {
-
-        /*document.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }, true);*/
         
         customElements.define("scroll-able", class Scrollable extends HTMLElement {
             constructor() {
@@ -414,11 +407,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._sX = 0;
                 this._scrollingX = -1;
                 this._trackX.parentNode.addEventListener("pointerdown", (e)=> {
+                    document.body.classList.add("dragging");
                     this._scrollingX = e.pointerId;
                     this._sX = e.offsetX;
                     this._updateScroll();
-                    document.documentElement.classList.add("dragging");
-                }, true);
+                    
+                });
                 document.addEventListener("pointermove", (e)=> {
                     if (this._scrollingX == e.pointerId) {
                         const offsetX = window.convertPointFromPageToNode(this._trackX.parentNode, e.clientX, e.clientY).x - this._sX;
@@ -428,13 +422,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                             behavior: "instant"
                         });
                     }
-                }, true);
+                });
                 document.addEventListener("pointerup", (e)=> {
                     if (this._scrollingX == e.pointerId) {
+                        document.body.classList.remove("dragging");
                         this._scrollingX = -1;
-                        document.documentElement.classList.remove("dragging");
                     }
-                }, true);
+                });
 
                 this._trackY.draggable = false;
                 this._trackY.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
@@ -442,11 +436,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._sY = 0;
                 this._scrollingY = -1;
                 this._trackY.parentNode.addEventListener("pointerdown", (e)=> {
+                    document.body.classList.add("dragging");
                     this._scrollingY = e.pointerId;
                     this._sY = e.offsetY;
                     this._updateScroll();
-                    document.documentElement.classList.add("dragging");
-                }, true);
+                    
+                });
                 document.addEventListener("pointermove", (e)=> {
                     if (this._scrollingY == e.pointerId) {
                         const offsetY = window.convertPointFromPageToNode(this._trackY.parentNode, e.clientX, e.clientY).y - this._sY;
@@ -456,13 +451,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                             behavior: "instant"
                         });
                     }
-                }, true);
+                });
                 document.addEventListener("pointerup", (e)=> {
                     if (this._scrollingY == e.pointerId) {
+                        document.body.classList.remove("dragging");
                         this._scrollingY = -1;
-                        document.documentElement.classList.remove("dragging");
                     }
-                }, true);
+                });
 
                 //
                 this._scrollable.addEventListener("scroll", (e)=>{
@@ -528,6 +523,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     -moz-transform: translate3d(0, 0, 0);
                     -ms-transform: translate3d(0, 0, 0);
                     transform: translate3d(0, 0, 0);
+
+                    /* */
+                    transform-origin: 50% 50%;
                 
                     /* Some filter hack */
                     filter: grayscale(0%);
@@ -692,6 +690,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     cursor: grab;
                     display: block;
                     pointer-events: auto;
+                    
 
                     /* */
                     -webkit-user-select: none;
@@ -803,6 +802,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                     padding: 0px;
                     margin: 0px;
+
+                    
                 }
 
                 .scrollable > ::slotted(*) {
