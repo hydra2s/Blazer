@@ -254,6 +254,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             constructor() {
                 super();
 
+                // wlop-elements
+                this._topLeftP = document.createElement("div"); this._topLeftP.classList.add("top-left");
+                this._topRightP = document.createElement("div"); this._topRightP.classList.add("top-right");
+                this._bottomLeftP = document.createElement("div"); this._bottomLeftP.classList.add("bottom-left");
+                this._bottomRightP = document.createElement("div"); this._bottomRightP.classList.add("bottom-right");
+                this._points = [this._topLeftP, this._topRightP, this._bottomLeftP, this._bottomRightP];
+
                 //
                 window.addEventListener("resize", (e)=>{
                     this._updateScroll();
@@ -294,6 +301,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 //
                 this.attachShadow({ mode: "open" });
+
+                //
+                this._points.forEach((E)=>this.shadowRoot.appendChild(E));
                 this.shadowRoot.appendChild(this._style);
                 this.shadowRoot.appendChild(this._scrollX);
                 this.shadowRoot.appendChild(this._scrollY);
@@ -330,7 +340,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 document.addEventListener("pointermove", (e)=> {
                     if (this._scrollingX == e.pointerId) {
                         // TODO: transform support!
-                        const offsetX = (e.clientX - this._trackX.offsetLeft) - this._sX;
+                        const bounding = this._trackX.parentNode.getBoundingClientRect();
+                        const offsetX = (e.clientX - bounding.left) - this._sX;
                         this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
                         this._scrollable.scrollTo({
                             left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
@@ -352,11 +363,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._trackY.addEventListener("pointerdown", (e)=> {
                     this._scrollingY = e.pointerId;
                     this._sY = e.offsetY;
+                    this._updateScroll();
                 }, true);
                 document.addEventListener("pointermove", (e)=> {
                     if (this._scrollingY == e.pointerId) {
                         // TODO: transform support!
-                        const offsetY = (e.clientY - this._trackY.offsetTop) - this._sY;
+                        const bounding = this._trackY.parentNode.getBoundingClientRect();
+                        const offsetY = (e.clientY - bounding.top) - this._sY;
                         this._trackY.style.setProperty("--offsetPercent", this._spcY = Math.min(Math.max((offsetY) / (this._trackY.parentNode.offsetHeight - this._trackY.offsetHeight), 0.0), 1.0), "");
                         this._scrollable.scrollTo({
                             top: this._spcY * (this._scrollable.scrollHeight - this._scrollable.offsetHeight),
@@ -382,6 +395,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._style.textContent = `
                 /* TODO: scrolling library! */
                 :host {
+                    // don't override!
+                    position: relative !important;
+
+                    /* */
+                    min-height: min-content;
+                    min-width: min-content;
+
                     width: min(100%, 100vw);
                     height: min(100%, 100vh);
 
@@ -401,6 +421,61 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     -moz-user-select: none;
                     -o-user-select: none;
                     user-select: none;
+
+                    /* */
+                    --padding-left: 0px;
+                    --padding-right: 0px;
+                    --padding-top: 0px;
+                    --padding-bottom: 0px;
+                }
+
+                /* Descended elements */
+                .top-left, .top-right, .bottom-left, .bottom-right {
+                    z-index: -1;
+                    position: absolute;
+                    pointer-events: none;
+                    opacity: 0;
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    line-height: 0;
+                    overflow: hidden;
+                    color: transparent;
+                    background-color: transparent;
+                    content-visibility: hidden;
+                    visibility: hidden;
+                }
+
+                .top-right {
+                    top: calc(0px - var(--padding-top));
+                    left: auto;
+                    bottom: auto;
+                    right: calc(0px - var(--padding-right));
+                    float: right;
+                }
+
+                .top-left {
+                    top: calc(0px - var(--padding-top));
+                    left: calc(0px - var(--padding-left));
+                    bottom: auto;
+                    right: auto;
+                    float: left;
+                }
+
+                .bottom-right {
+                    top: auto;
+                    left: auto;
+                    bottom: calc(0px - var(--padding-bottom));
+                    right: calc(0px - var(--padding-right));
+                    float: right;
+                }
+
+                .bottom-left {
+                    top: auto;
+                    left: calc(0px - var(--padding-left));
+                    bottom: calc(0px - var(--padding-bottom));
+                    right: auto;
+                    float: left;
                 }
 
                 .scrollable {
@@ -429,18 +504,18 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                     /* */
                     max-width: min(100%, 100vw);
-                    min-height: min(100vh, 100%);
-                    max-height: min(100vh, 100%);
-                    
-                
-                    height: max-content;
+                    max-height: min(100%, 100vh);
+
+                    /* */
+                    min-height: 0px;//min-content;
+                    min-width: 0px;//min-content;
+
                     position: absolute;
                     left: 0; top: 0; right: 0; bottom: 0;
                 
                     /* */
                     overflow: auto;
                     overflow: overlay;
-                    overflow-x: hidden;
                     touch-action: none;
                 
                     /* */
@@ -603,8 +678,11 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._style.textContent = `
                 /* TODO: scrolling library! */
                 :host {
-                    width: min(100%, 100vw);
-                    height: min(100%, 100vh);
+                    min-width: min-content;
+                    min-height: min-content;
+
+                    width: min-content;
+                    height: min-content;
 
                     max-width: min(100%, 100vw);
                     max-height: min(100%, 100vh);
@@ -621,9 +699,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     flex: 0 0 100%;
                     aspect-ratio: 16 / 9;
                 
-                    max-height: 100%;
-                    max-width: 100%;
-                    width: 100%;
+                    max-width: min(100%, 100vw);
+                    max-height: min(100%, 100vh);
 
                     left: 0px;
                     top: 0px;
@@ -641,7 +718,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
                 
                 .scrollable {
-                    height: max-content;
                     display: inline-flex;
                     flex-direction: row;
 
