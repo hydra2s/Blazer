@@ -84,6 +84,27 @@ body, h1, h2, h3, h4, h5, h6, p, div {
 }
 
 * {
+    /* */
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    /* */
+    -webkit-perspective: 1000;
+    -moz-perspective: 1000;
+    -ms-perspective: 1000;
+    perspective: 1000;
+
+    /* Enable hardware acceleration */
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+
+    /* Some filter hack */
+    filter: grayscale(0%);
+
     /* Multi-Layering purpose default */
     background-clip: content-box;
     background-origin: content-box;
@@ -122,7 +143,7 @@ body, h1, h2, h3, h4, h5, h6, p, div {
     transition: none;
 }
 
-*.draggable, .draggable * {
+*.dragging, .dragging * {
 	cursor: move !important; /* fallback: no `url()` support or images disabled */
 	cursor: -webkit-grabbing !important; /* Chrome 1-21, Safari 4+ */
 	cursor:    -moz-grabbing !important; /* Firefox 1.5-26 */

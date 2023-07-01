@@ -48,6 +48,87 @@ export { WorkerLib };
 let JNGImage = {}; 
 if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope)) {
 
+    /* */
+    const _DOMMatrix_ = typeof DOMMatrix != "undefined" ? DOMMatrix : WebKitCSSMatrix;
+
+    /* */
+    if (typeof window != "undefined") {
+        var I = new _DOMMatrix_(`matrix3d(
+            1.0, 0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )`);
+        
+        /* TODO: make public for optimization */
+        class Point {
+            constructor(x, y, z) { this.x = x, this.y = y, this.z = z };
+
+            transformBy(matrix) {
+                var tmp = matrix.multiply(I.translate(this.x, this.y, this.z));
+                return new Point(tmp.m41, tmp.m42, tmp.m43);
+            }
+        }
+
+        /* TODO: make public for optimization */
+        const _identity_ = `matrix3d(
+            1.0, 0.0, 0.0, 0.0, 
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        )`;
+        const getTransformationMatrix = (element) => {
+            let fromNodeTransform = new _DOMMatrix_(_identity_);
+            let x = element;
+            while (x && x !== x.ownerDocument.documentElement) {
+                let transform = new _DOMMatrix_(_identity_);
+                let origin = [(x.offsetWidth||0)/2, (x.offsetHeight||0)/2];//[0, 0];
+
+                if (x.computedStyleMap) {
+                    /* TODO: support of transform-origin */
+                    const mapping = x.computedStyleMap();
+                    const computed = mapping.get("transform");
+                    //const cmOrigin = mapping.get("transform-origin");
+                    transform = (computed && computed.value != "none") ? computed.toMatrix() : transform;
+                    //origin = [cmOrigin.x || origin[0], cmOrigin.y || origin[1]];
+                } else {
+                    try {
+                        /* TODO: support of transform-origin */
+                        const mapping = window.getComputedStyle(x, "");
+                        const computed = mapping.getPropertyValue("transform");
+                        transform = (computed && computed != "none") ? new _DOMMatrix_(computed) : transform;
+                        origin = mapping.getPropertyValue("transform-origin").split(" ").map((V)=>parseFloat(V.replace("px", ""))).map((_,i)=>_||origin[i]);
+                    } catch(e) {};
+                }
+
+                if (transform) {
+                    fromNodeTransform = (new _DOMMatrix_(_identity_).translate(...origin).multiply(transform.translate(...origin.map(_=>-_)))).multiply(fromNodeTransform);
+                }
+                x = x.parentNode || x?.getRootNode()?.host;
+            }
+
+            const w = element.offsetWidth;
+            const h = element.offsetHeight;
+            const p1 = new Point(0, 0, 0).transformBy(fromNodeTransform);
+            const p2 = new Point(w, 0, 0).transformBy(fromNodeTransform);
+            const p3 = new Point(w, h, 0).transformBy(fromNodeTransform);
+            const p4 = new Point(0, h, 0).transformBy(fromNodeTransform);
+            const left = Math.min(p1.x, p2.x, p3.x, p4.x);
+            const top = Math.min(p1.y, p2.y, p3.y, p4.y);
+            const rect = element.getBoundingClientRect();
+            return I.translate((window.scrollX || window.pageXOffset) + rect.left - left, (window.scrollY || window.pageYOffset) + rect.top - top, 0).multiply(fromNodeTransform);
+        }
+
+        window.convertPointFromPageToNode = window.webkitConvertPointFromPageToNode || ((element, pageX, pageY) => {
+            return new Point(pageX, pageY, 0).transformBy(getTransformationMatrix(element).inverse());
+        });
+
+        window.convertPointFromNodeToPage = window.webkitConvertPointFromNodeToPage || ((element, offsetX, offsetY) => {
+            return new Point(offsetX, offsetY, 0).transformBy(getTransformationMatrix(element));
+        });
+    }
+
+
     //const _WC = new InterWork(new Worker("./blazer.js", {type: "module"}), true);
     const _TW = new Array(Math.min(navigator.hardwareConcurrency || 4, 8)).fill({ counter: 0 }).map((I)=>({
         ...I, worker: new InterWork(new Worker("./blazer.js", {type: "module"}), true),
@@ -332,56 +413,56 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 this._sX = 0;
                 this._scrollingX = -1;
-                this._trackX.addEventListener("pointerdown", (e)=> {
+                this._trackX.parentNode.addEventListener("pointerdown", (e)=> {
                     this._scrollingX = e.pointerId;
                     this._sX = e.offsetX;
                     this._updateScroll();
+                    document.documentElement.classList.add("dragging");
                 }, true);
                 document.addEventListener("pointermove", (e)=> {
                     if (this._scrollingX == e.pointerId) {
-                        // TODO: transform support!
-                        const bounding = this._trackX.parentNode.getBoundingClientRect();
-                        const offsetX = (e.clientX - bounding.left) - this._sX;
+                        const offsetX = window.convertPointFromPageToNode(this._trackX.parentNode, e.clientX, e.clientY).x - this._sX;
                         this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
                         this._scrollable.scrollTo({
                             left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
                             behavior: "instant"
                         });
                     }
-                });
+                }, true);
                 document.addEventListener("pointerup", (e)=> {
                     if (this._scrollingX == e.pointerId) {
                         this._scrollingX = -1;
+                        document.documentElement.classList.remove("dragging");
                     }
-                });
+                }, true);
 
                 this._trackY.draggable = false;
                 this._trackY.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
-                
+
                 this._sY = 0;
                 this._scrollingY = -1;
-                this._trackY.addEventListener("pointerdown", (e)=> {
+                this._trackY.parentNode.addEventListener("pointerdown", (e)=> {
                     this._scrollingY = e.pointerId;
                     this._sY = e.offsetY;
                     this._updateScroll();
+                    document.documentElement.classList.add("dragging");
                 }, true);
                 document.addEventListener("pointermove", (e)=> {
                     if (this._scrollingY == e.pointerId) {
-                        // TODO: transform support!
-                        const bounding = this._trackY.parentNode.getBoundingClientRect();
-                        const offsetY = (e.clientY - bounding.top) - this._sY;
+                        const offsetY = window.convertPointFromPageToNode(this._trackY.parentNode, e.clientX, e.clientY).y - this._sY;
                         this._trackY.style.setProperty("--offsetPercent", this._spcY = Math.min(Math.max((offsetY) / (this._trackY.parentNode.offsetHeight - this._trackY.offsetHeight), 0.0), 1.0), "");
                         this._scrollable.scrollTo({
                             top: this._spcY * (this._scrollable.scrollHeight - this._scrollable.offsetHeight),
                             behavior: "instant"
                         });
                     }
-                });
+                }, true);
                 document.addEventListener("pointerup", (e)=> {
                     if (this._scrollingY == e.pointerId) {
                         this._scrollingY = -1;
+                        document.documentElement.classList.remove("dragging");
                     }
-                });
+                }, true);
 
                 //
                 this._scrollable.addEventListener("scroll", (e)=>{
@@ -427,6 +508,29 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     --padding-right: 0px;
                     --padding-top: 0px;
                     --padding-bottom: 0px;
+                }
+
+                :host, :host * {
+                    /* */
+                    -webkit-backface-visibility: hidden;
+                    -moz-backface-visibility: hidden;
+                    -ms-backface-visibility: hidden;
+                    backface-visibility: hidden;
+                
+                    /* */
+                    -webkit-perspective: 1000;
+                    -moz-perspective: 1000;
+                    -ms-perspective: 1000;
+                    perspective: 1000;
+                
+                    /* Enable hardware acceleration */
+                    -webkit-transform: translate3d(0, 0, 0);
+                    -moz-transform: translate3d(0, 0, 0);
+                    -ms-transform: translate3d(0, 0, 0);
+                    transform: translate3d(0, 0, 0);
+                
+                    /* Some filter hack */
+                    filter: grayscale(0%);
                 }
 
                 /* Descended elements */
@@ -576,7 +680,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     overflow: hidden;
                     position: absolute;
                     background-color: transparent;
-                    cursor: grab;
                     pointer-events: none;
                     z-index: 9999;
                 }
@@ -596,6 +699,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     -moz-user-select: none;
                     -o-user-select: none;
                     user-select: none;
+                }
+
+                .scroll-x .track:active, .scroll-y .track:active {
+                    cursor: move; /* fallback: no url() support or images disabled */
+                    cursor: -webkit-grabbing; /* Chrome 1-21, Safari 4+ */
+                    cursor:    -moz-grabbing; /* Firefox 1.5-26 */
+                    cursor:         grabbing; /* W3C standards syntax, should come least */
                 }
 `;
 
