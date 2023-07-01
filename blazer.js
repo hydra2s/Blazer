@@ -50,26 +50,11 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
     /* */
     const _DOMMatrix_ = typeof DOMMatrix != "undefined" ? DOMMatrix : WebKitCSSMatrix;
+    const ifNull = (a,b)=>((a != null) ? (a||0) : (b||0));
+    const neg = (a)=>(-a);
 
     /* */
     if (typeof window != "undefined") {
-        var I = new _DOMMatrix_(`matrix3d(
-            1.0, 0.0, 0.0, 0.0, 
-            0.0, 1.0, 0.0, 0.0,
-            0.0, 0.0, 1.0, 0.0,
-            0.0, 0.0, 0.0, 1.0
-        )`);
-        
-        /* TODO: make public for optimization */
-        class Point {
-            constructor(x, y, z) { this.x = x, this.y = y, this.z = z };
-
-            transformBy(matrix) {
-                var tmp = matrix.multiply(I.translate(this.x, this.y, this.z));
-                return new Point(tmp.m41, tmp.m42, tmp.m43);
-            }
-        }
-
         /* TODO: make public for optimization */
         const _identity_ = `matrix3d(
             1.0, 0.0, 0.0, 0.0, 
@@ -77,13 +62,23 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             0.0, 0.0, 1.0, 0.0,
             0.0, 0.0, 0.0, 1.0
         )`;
+
+        /* TODO: make public for optimization */
+        class Point {
+            constructor(x, y, z) { this.x = x, this.y = y, this.z = z };
+
+            transformBy(matrix) {
+                var tmp = matrix.multiply(new _DOMMatrix_(_identity_).translate(this.x, this.y, this.z));
+                return new Point(tmp.m41, tmp.m42, tmp.m43);
+            }
+        }
+
+        
         const getTransformationMatrix = (element) => {
             let fromNodeTransform = new _DOMMatrix_(_identity_);
             let x = element;
             while (x && x !== x.ownerDocument.documentElement) {
                 let transform = new _DOMMatrix_(_identity_);
-                let origin = [(x.offsetWidth||0)/2, (x.offsetHeight||0)/2];//[0, 0];
-
                 if (x.computedStyleMap) {
                     /* TODO: support of transform-origin */
                     const computed = x.computedStyleMap().get("transform");
@@ -95,12 +90,21 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     } catch(e) {};
                 }
 
+                // get transform origin for correction
+                let origin = [(x.offsetWidth||0)/2, (x.offsetHeight||0)/2];
                 try {
-                    origin = window.getComputedStyle(x, "").getPropertyValue("transform-origin").split(" ").map((V)=>parseFloat(V.replace("px", ""))).map((_,i)=>_||origin[i]);
+                    origin = window.getComputedStyle(x, "").getPropertyValue("transform-origin").split(" ").map((V)=>parseFloat(V.replace("px", ""))).map((_,i)=>ifNull(_, origin[i]));
                 } catch(e) {};
 
+                //
                 if (transform) {
-                    fromNodeTransform = (new _DOMMatrix_(_identity_).translate(...origin).multiply(transform.translate(...origin.map(_=>-_)))).multiply(fromNodeTransform);
+                    fromNodeTransform = new _DOMMatrix_(_identity_)
+                        .translate(...origin)
+                        .multiply(new _DOMMatrix_(_identity_)
+                            .multiply(transform)
+                            .translate(...origin.map(neg))
+                        )
+                        .multiply(fromNodeTransform);
                 }
                 x = x.parentNode || x?.getRootNode()?.host;
             }
@@ -114,7 +118,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             const left = Math.min(p1.x, p2.x, p3.x, p4.x);
             const top = Math.min(p1.y, p2.y, p3.y, p4.y);
             const rect = element.getBoundingClientRect();
-            return I.translate((window.scrollX || window.pageXOffset) + rect.left - left, (window.scrollY || window.pageYOffset) + rect.top - top, 0).multiply(fromNodeTransform);
+            return new _DOMMatrix_(_identity_).translate((window.scrollX || window.pageXOffset) + rect.left - left, (window.scrollY || window.pageYOffset) + rect.top - top, 0).multiply(fromNodeTransform);
         }
 
         window.convertPointFromPageToNode = window.webkitConvertPointFromPageToNode || ((element, pageX, pageY) => {
@@ -336,21 +340,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._points = [this._topLeftP, this._topRightP, this._bottomLeftP, this._bottomRightP];
 
                 //
-                window.addEventListener("resize", (e)=>{
-                    this._updateScroll();
-                });
-
-                //
-                document.addEventListener("resize", (e)=>{
-                    this._updateScroll();
-                });
-
-                //
-                this.addEventListener("resize", (e)=>{
-                    this._updateScroll();
-                });
-
-                //
                 this._scrollX = document.createElement("div");
                 this._scrollY = document.createElement("div");
                 this._scrollable = document.createElement("div");
@@ -358,9 +347,13 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._style = document.createElement("style");
 
                 //
-                this._scrollable.addEventListener("resize", (e)=>{
-                    this._updateScroll();
-                });
+                window.addEventListener("resize", this._updateSize.bind(this));
+                document.addEventListener("resize", this._updateSize.bind(this));
+                this.addEventListener("resize", this._updateSize.bind(this));
+
+                //
+                this._scrollable.addEventListener("resize", this._updateSize.bind(this));
+                this._scrollable.addEventListener("scroll", this._updateSize.bind(this));
 
                 //
                 this._trackX = document.createElement("div");
@@ -386,8 +379,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._scrollY.appendChild(this._trackY);
 
                 //
-                this._trackX.draggable = true;
-
                 this.handleDrag = (e)=>{
                     e.preventDefault();
                     e.dataTransfer.dropEffect = 'move';
@@ -401,70 +392,65 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._blank.style.display = "none";
 
                 //
-                this._trackX.draggable = false;
-                this._trackX.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
+                {
+                    this._trackX.draggable = false;
+                    this._trackX.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
 
-                this._sX = 0;
-                this._scrollingX = -1;
-                this._trackX.parentNode.addEventListener("pointerdown", (e)=> {
-                    document.body.classList.add("dragging");
-                    this._scrollingX = e.pointerId;
-                    this._sX = e.offsetX;
-                    this._updateScroll();
-                    
-                });
-                document.addEventListener("pointermove", (e)=> {
-                    if (this._scrollingX == e.pointerId) {
-                        const offsetX = window.convertPointFromPageToNode(this._trackX.parentNode, e.clientX, e.clientY).x - this._sX;
-                        this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
-                        this._scrollable.scrollTo({
-                            left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
-                            behavior: "instant"
-                        });
-                    }
-                });
-                document.addEventListener("pointerup", (e)=> {
-                    if (this._scrollingX == e.pointerId) {
-                        document.body.classList.remove("dragging");
-                        this._scrollingX = -1;
-                    }
-                });
+                    this._sX = 0;
+                    this._scrollingX = -1;
+                    this._trackX.parentNode.addEventListener("pointerdown", (e)=> {
+                        document.body.classList.add("dragging");
+                        this._scrollingX = e.pointerId;
+                        this._sX = e.offsetX;
+                        this._updateSize();
+                    });
+                    document.addEventListener("pointermove", (e)=> {
+                        if (this._scrollingX == e.pointerId) {
+                            const offsetX = window.convertPointFromPageToNode(this._trackX.parentNode, e.clientX, e.clientY).x - this._sX;
+                            this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
+                            this._scrollable.scrollTo({
+                                left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
+                                behavior: "instant"
+                            });
+                        }
+                    });
+                    document.addEventListener("pointerup", (e)=> {
+                        if (this._scrollingX == e.pointerId) {
+                            document.body.classList.remove("dragging");
+                            this._scrollingX = -1;
+                        }
+                    });
+                }
 
-                this._trackY.draggable = false;
-                this._trackY.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
+                {
+                    this._trackY.draggable = false;
+                    this._trackY.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
 
-                this._sY = 0;
-                this._scrollingY = -1;
-                this._trackY.parentNode.addEventListener("pointerdown", (e)=> {
-                    document.body.classList.add("dragging");
-                    this._scrollingY = e.pointerId;
-                    this._sY = e.offsetY;
-                    this._updateScroll();
-                    
-                });
-                document.addEventListener("pointermove", (e)=> {
-                    if (this._scrollingY == e.pointerId) {
-                        const offsetY = window.convertPointFromPageToNode(this._trackY.parentNode, e.clientX, e.clientY).y - this._sY;
-                        this._trackY.style.setProperty("--offsetPercent", this._spcY = Math.min(Math.max((offsetY) / (this._trackY.parentNode.offsetHeight - this._trackY.offsetHeight), 0.0), 1.0), "");
-                        this._scrollable.scrollTo({
-                            top: this._spcY * (this._scrollable.scrollHeight - this._scrollable.offsetHeight),
-                            behavior: "instant"
-                        });
-                    }
-                });
-                document.addEventListener("pointerup", (e)=> {
-                    if (this._scrollingY == e.pointerId) {
-                        document.body.classList.remove("dragging");
-                        this._scrollingY = -1;
-                    }
-                });
-
-                //
-                this._scrollable.addEventListener("scroll", (e)=>{
-                    this._updateScroll();
-                    if (this._scrollingY < 0) { this._trackY.style.setProperty("--offsetPercent", this._spcY = (this._scrollable.scrollTop / (this._scrollable.scrollHeight - this._scrollable.offsetHeight)), ""); };
-                    if (this._scrollingX < 0) { this._trackX.style.setProperty("--offsetPercent", this._spcX = (this._scrollable.scrollLeft / (this._scrollable.scrollWidth - this._scrollable.offsetWidth)), ""); };
-                });
+                    this._sY = 0;
+                    this._scrollingY = -1;
+                    this._trackY.parentNode.addEventListener("pointerdown", (e)=> {
+                        document.body.classList.add("dragging");
+                        this._scrollingY = e.pointerId;
+                        this._sY = e.offsetY;
+                        this._updateSize();
+                    });
+                    document.addEventListener("pointermove", (e)=> {
+                        if (this._scrollingY == e.pointerId) {
+                            const offsetY = window.convertPointFromPageToNode(this._trackY.parentNode, e.clientX, e.clientY).y - this._sY;
+                            this._trackY.style.setProperty("--offsetPercent", this._spcY = Math.min(Math.max((offsetY) / (this._trackY.parentNode.offsetHeight - this._trackY.offsetHeight), 0.0), 1.0), "");
+                            this._scrollable.scrollTo({
+                                top: this._spcY * (this._scrollable.scrollHeight - this._scrollable.offsetHeight),
+                                behavior: "instant"
+                            });
+                        }
+                    });
+                    document.addEventListener("pointerup", (e)=> {
+                        if (this._scrollingY == e.pointerId) {
+                            document.body.classList.remove("dragging");
+                            this._scrollingY = -1;
+                        }
+                    });
+                }
 
                 //
                 this._scrollable.appendChild(this._slot);
@@ -708,13 +694,18 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 `;
 
-                this._updateScroll();
-                requestAnimationFrame(this._updateScroll.bind(this));
-
+                requestAnimationFrame(this._updateSize.bind(this));
+                document.addEventListener("DOMContentLoaded", this._updateSize.bind(this));
                 return this;
             }
 
             _updateScroll() {
+                if (this._scrollingY < 0) { this._trackY.style.setProperty("--offsetPercent", this._spcY = (this._scrollable.scrollTop / (this._scrollable.scrollHeight - this._scrollable.offsetHeight)), ""); };
+                if (this._scrollingX < 0) { this._trackX.style.setProperty("--offsetPercent", this._spcX = (this._scrollable.scrollLeft / (this._scrollable.scrollWidth - this._scrollable.offsetWidth)), ""); };
+                return this;
+            }
+
+            _updateSize() {
                 const tX = this._trackX;
                 const tY = this._trackY;
 
@@ -726,6 +717,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 if (this._scrollCoefX >= 1) { tX.style.setProperty("opacity", "0.0", ""); tX.style.setProperty("pointer-events", "none", ""); } else { tX.style.removeProperty("opacity"); tX.style.removeProperty("pointer-events"); };
                 if (this._scrollCoefY >= 1) { tY.style.setProperty("opacity", "0.0", ""); tY.style.setProperty("pointer-events", "none", ""); } else { tY.style.removeProperty("opacity"); tY.style.removeProperty("pointer-events"); };
+                
+                this._updateScroll();
+                return this;
             }
 
             disconnectedCallback() {
@@ -733,8 +727,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                this._updateScroll();
-                requestAnimationFrame(this._updateScroll.bind(this));
+                requestAnimationFrame(this._updateSize.bind(this));
+                document.addEventListener("DOMContentLoaded", this._updateSize.bind(this));
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
