@@ -32,16 +32,7 @@
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
     </script>-->
 </head>
-<body>
-
-    <!-- Custom scrollbars -->
-    <!--
-        <div class="scroll-y"></div>
-        <div class="scroll-x"></div>
-    -->
-
-    <!-- TODO: custom element instead of -->
-    <div class="scrollable">
+<body><scroll-able>
 
     <script type="module" async>
         import {loadImageBitmap, loadImage, getSharedImageData, InterWork, provideForWorker, IDBCache} from "./blazer.js";
@@ -71,5 +62,6 @@
         canvasI.forEach(document.body.appendChild.bind(document.body));
         
     </script>
-</div></body>
+
+</scroll-able></body>
 </html>

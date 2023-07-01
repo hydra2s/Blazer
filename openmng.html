@@ -23,15 +23,7 @@
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
     </script>-->
 </head>
-<body>
-    <!-- Custom scrollbars -->
-    <!--
-        <div class="scroll-y"></div>
-        <div class="scroll-x"></div>
-    -->
-    
-    <!-- TODO: custom element instead of -->
-    <div class="scrollable">
+<body><scroll-able>
 
     <canvas width="400" height="400" id="canvas"></canvas>
 
@@ -87,5 +79,5 @@
             await new Promise((r)=>requestAnimationFrame(r));
         }
     </script>
-</div></body>
+</scroll-able></body>
 </html>

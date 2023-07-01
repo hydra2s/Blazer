@@ -25,39 +25,18 @@
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
     </script>-->
 </head>
-<body>
-    <!-- Custom scrollbars -->
-    <!--
-        <div class="scroll-y"></div>
-        <div class="scroll-x"></div>
-    -->
-
-    <!-- TODO: custom element instead of -->
-    <div class="scrollable">
+<body><scroll-able>
 
     <h1>Blazer Main Page</h1>
 
     Build your best website or web project...
     You can use arrow keys to scrolling those images.
 
-    <div class="vbi-h" style="width: min(80%, 800px);">
+    <slider-x style="width: min(80%, 800px);">
         <img src="test/1.jpg" alt="IMG-1" loading="lazy" decoding="async"/>
         <img src="test/2.jpg" alt="IMG-2" loading="lazy" decoding="async"/>
         <img src="test/3.jpg" alt="IMG-3" loading="lazy" decoding="async"/>
-    </div>
+    </slider-x>
 
-    <script>
-        // one small script to fix scrolling problems
-        document.querySelectorAll(".vbi-h").forEach((E)=>{
-            E.addEventListener("wheel", (e)=>{
-                e.preventDefault();
-
-                // abuse a scrolling bug?
-                if (e.deltaY > 0) { E.scrollBy( 10, 0); };
-                if (e.deltaY < 0) { E.scrollBy(-10, 0); };
-            });
-        });
-    </script>
-
-</div></body>
+</scroll-able></body>
 </html>
