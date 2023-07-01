@@ -244,9 +244,30 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
     } catch(e) {};
 
     try {
+
+        /*document.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }, true);*/
+        
         customElements.define("scroll-able", class Scrollable extends HTMLElement {
             constructor() {
                 super();
+
+                //
+                window.addEventListener("resize", (e)=>{
+                    this._updateScroll();
+                });
+
+                //
+                document.addEventListener("resize", (e)=>{
+                    this._updateScroll();
+                });
+
+                //
+                this.addEventListener("resize", (e)=>{
+                    this._updateScroll();
+                });
 
                 //
                 this._scrollX = document.createElement("div");
@@ -256,6 +277,17 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._style = document.createElement("style");
 
                 //
+                this._scrollable.addEventListener("resize", (e)=>{
+                    this._updateScroll();
+                });
+
+                //
+                this._trackX = document.createElement("div");
+                this._trackY = document.createElement("div");
+
+                //
+                this._trackX.classList.add("track");
+                this._trackY.classList.add("track");
                 this._scrollX.classList.add("scroll-x");
                 this._scrollY.classList.add("scroll-y");
                 this._scrollable.classList.add("scrollable");
@@ -266,6 +298,84 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this.shadowRoot.appendChild(this._scrollX);
                 this.shadowRoot.appendChild(this._scrollY);
                 this.shadowRoot.appendChild(this._scrollable);
+                this._scrollX.appendChild(this._trackX);
+                this._scrollY.appendChild(this._trackY);
+
+                //
+                this._trackX.draggable = true;
+
+                this.handleDrag = (e)=>{
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    return false;
+                }
+
+                //
+                this._blank = document.createElement('canvas');
+                this._blank.width = 1;
+                this._blank.height = 1;
+                this._blank.style.display = "none";
+
+                //
+                this._trackX.draggable = false;
+                this._trackX.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
+
+                this._sX = 0;
+                this._scrollingX = -1;
+                this._trackX.addEventListener("pointerdown", (e)=> {
+                    this._scrollingX = e.pointerId;
+                    this._sX = e.offsetX;
+                    this._updateScroll();
+                }, true);
+                document.addEventListener("pointermove", (e)=> {
+                    if (this._scrollingX == e.pointerId) {
+                        // TODO: transform support!
+                        const offsetX = (e.clientX - this._trackX.offsetLeft) - this._sX;
+                        this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
+                        this._scrollable.scrollTo({
+                            left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
+                            behavior: "instant"
+                        });
+                    }
+                });
+                document.addEventListener("pointerup", (e)=> {
+                    if (this._scrollingX == e.pointerId) {
+                        this._scrollingX = -1;
+                    }
+                });
+
+                this._trackY.draggable = false;
+                this._trackY.addEventListener("selectstart", (e)=> { e.preventDefault(); return false; });
+                
+                this._sY = 0;
+                this._scrollingY = -1;
+                this._trackY.addEventListener("pointerdown", (e)=> {
+                    this._scrollingY = e.pointerId;
+                    this._sY = e.offsetY;
+                }, true);
+                document.addEventListener("pointermove", (e)=> {
+                    if (this._scrollingY == e.pointerId) {
+                        // TODO: transform support!
+                        const offsetY = (e.clientY - this._trackY.offsetTop) - this._sY;
+                        this._trackY.style.setProperty("--offsetPercent", this._spcY = Math.min(Math.max((offsetY) / (this._trackY.parentNode.offsetHeight - this._trackY.offsetHeight), 0.0), 1.0), "");
+                        this._scrollable.scrollTo({
+                            top: this._spcY * (this._scrollable.scrollHeight - this._scrollable.offsetHeight),
+                            behavior: "instant"
+                        });
+                    }
+                });
+                document.addEventListener("pointerup", (e)=> {
+                    if (this._scrollingY == e.pointerId) {
+                        this._scrollingY = -1;
+                    }
+                });
+
+                //
+                this._scrollable.addEventListener("scroll", (e)=>{
+                    this._updateScroll();
+                    if (this._scrollingY < 0) { this._trackY.style.setProperty("--offsetPercent", this._spcY = (this._scrollable.scrollTop / (this._scrollable.scrollHeight - this._scrollable.offsetHeight)), ""); };
+                    if (this._scrollingX < 0) { this._trackX.style.setProperty("--offsetPercent", this._spcX = (this._scrollable.scrollLeft / (this._scrollable.scrollWidth - this._scrollable.offsetWidth)), ""); };
+                });
 
                 //
                 this._scrollable.appendChild(this._slot);
@@ -284,19 +394,44 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                     padding: 0px;
                     margin: 0px;
+
+                    /* */
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -o-user-select: none;
+                    user-select: none;
                 }
 
                 .scrollable {
+                    /* */
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -o-user-select: none;
+                    user-select: none;
+                
+                    /* */
+                    -webkit-user-drag: none;
+                    -khtml-user-drag: none;
+                    -moz-user-drag: none;
+                    -o-user-drag: none;
+                    user-drag: none;
+
+                    /* */
                     display: block;
                     text-align: center;
                     position: relative;
-                
+
                     /* */
                     width: min(100%, 100vw);
+                    height: min(100%, 100vh);
+
+                    /* */
                     max-width: min(100%, 100vw);
                     min-height: min(100vh, 100%);
                     max-height: min(100vh, 100%);
-                    height: min(100vh, 100%);
+                    
                 
                     height: max-content;
                     position: absolute;
@@ -314,42 +449,99 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     scrollbar-width: none;
                     scroll-behavior: smooth;
                 }
-                
+
+                .scroll-y .track {
+                    --offsetPercent: 0.0;
+
+                    width: 100%;
+                    height: var(--ownSize);
+                    transform: translateY(
+                        calc(
+                            var(--offsetPercent) * 
+                            calc(var(--parentSize) - var(--ownSize))
+                        )
+                    );
+                }
+
+                .scroll-x .track {
+                    --offsetPercent: 0.0;
+
+                    height: 100%;
+                    width: var(--ownSize);
+                    transform: translateX(
+                        calc(
+                            var(--offsetPercent) * 
+                            calc(var(--parentSize) - var(--ownSize))
+                        )
+                    );
+                }
+
                 /* */
                 .scroll-y {
-                    position: absolute;
                     height: calc(100% - 1rem);
                     width: 1rem;
-                    
+
                     top: 0px;
-                
                     right: 0px;
                     left: auto;
-                    background-color: transparent;
                 }
                 
                 /* */
                 .scroll-x {
-                    position: absolute;
                     width: calc(100% - 1rem);
                     height: 1rem;
                     
                     left: 0px;
-                
                     bottom: 0px;
                     top: auto;
+                }
+
+                /* */
+                .scroll-x, .scroll-y {
+                    overflow: hidden;
+                    position: absolute;
                     background-color: transparent;
+                    cursor: grab;
+                    pointer-events: none;
+                    z-index: 9999;
                 }
                 
                 /* */
-                .scroll-x .track, .scroll-x .track {
+                .scroll-x .track, .scroll-y .track {
                     /* important! */
                     position: sticky;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    cursor: grab;
+                    display: block;
+                    pointer-events: auto;
+
+                    /* */
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -o-user-select: none;
+                    user-select: none;
                 }
 `;
 
-                //
+                this._updateScroll();
+                requestAnimationFrame(this._updateScroll.bind(this));
+
                 return this;
+            }
+
+            _updateScroll() {
+                const tX = this._trackX;
+                const tY = this._trackY;
+
+                tX.style.setProperty("--ownSize", (tX.parentNode.offsetWidth * (this._scrollCoefX = this._scrollable.offsetWidth / this._scrollable.scrollWidth)) + "px", "");
+                tX.style.setProperty("--parentSize", tX.parentNode.offsetWidth + "px", "");
+
+                tY.style.setProperty("--ownSize", (tY.parentNode.offsetHeight * (this._scrollCoefY = this._scrollable.offsetHeight / this._scrollable.scrollHeight)) + "px", "");
+                tY.style.setProperty("--parentSize", tY.parentNode.offsetHeight + "px", "");
+
+                if (this._scrollCoefX >= 1) { tX.style.setProperty("opacity", "0.0", ""); tX.style.setProperty("pointer-events", "none", ""); } else { tX.style.removeProperty("opacity"); tX.style.removeProperty("pointer-events"); };
+                if (this._scrollCoefY >= 1) { tY.style.setProperty("opacity", "0.0", ""); tY.style.setProperty("pointer-events", "none", ""); } else { tY.style.removeProperty("opacity"); tY.style.removeProperty("pointer-events"); };
             }
 
             disconnectedCallback() {
@@ -357,7 +549,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                
+                this._updateScroll();
+                requestAnimationFrame(this._updateScroll.bind(this));
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
@@ -451,7 +644,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     height: max-content;
                     display: inline-flex;
                     flex-direction: row;
-                
+
                     /* use overlay scroll-bars library */
                     scrollbar-gutter: stable both-edges;
                     scrollbar-width: thin;
