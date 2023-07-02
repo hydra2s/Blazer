@@ -347,13 +347,14 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._style = document.createElement("style");
 
                 //
-                window.addEventListener("resize", this._updateSize.bind(this));
-                document.addEventListener("resize", this._updateSize.bind(this));
-                this.addEventListener("resize", this._updateSize.bind(this));
+                window.addEventListener("beforeunload", this._saveToStorage.bind(this));
+                window.addEventListener("resize", ()=> { this._updateSize()._updateScroll(); });
+                document.addEventListener("resize", ()=> { this._updateSize()._updateScroll(); });
+                this.addEventListener("resize", ()=> { this._updateSize()._updateScroll(); });
 
                 //
-                this._scrollable.addEventListener("resize", this._updateSize.bind(this));
-                this._scrollable.addEventListener("scroll", this._updateSize.bind(this));
+                this._scrollable.addEventListener("resize", ()=> { this._updateSize()._updateScroll() });
+                this._scrollable.addEventListener("scroll", ()=> { this._updateSize()._updateScroll() });
 
                 //
                 this._trackX = document.createElement("div");
@@ -399,26 +400,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     this._sX = 0;
                     this._scrollingX = -1;
                     this._trackX.parentNode.addEventListener("pointerdown", (e)=> {
-                        document.body.classList.add("dragging");
+                        if (!document.body.classList.contains("dragging")) {
+                            document.body.classList.add("dragging");
+                        }
                         this._scrollingX = e.pointerId;
                         this._sX = e.offsetX;
-                        this._updateSize();
-                    });
-                    document.addEventListener("pointermove", (e)=> {
-                        if (this._scrollingX == e.pointerId) {
-                            const offsetX = window.convertPointFromPageToNode(this._trackX.parentNode, e.clientX, e.clientY).x - this._sX;
-                            this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
-                            this._scrollable.scrollTo({
-                                left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
-                                behavior: "instant"
-                            });
-                        }
-                    });
-                    document.addEventListener("pointerup", (e)=> {
-                        if (this._scrollingX == e.pointerId) {
-                            document.body.classList.remove("dragging");
-                            this._scrollingX = -1;
-                        }
+                        this._updateSize()._updateScroll();
                     });
                 }
 
@@ -429,12 +416,25 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     this._sY = 0;
                     this._scrollingY = -1;
                     this._trackY.parentNode.addEventListener("pointerdown", (e)=> {
-                        document.body.classList.add("dragging");
+                        if (!document.body.classList.contains("dragging")) {
+                            document.body.classList.add("dragging");
+                        }
                         this._scrollingY = e.pointerId;
                         this._sY = e.offsetY;
-                        this._updateSize();
+                        this._updateSize()._updateScroll();
                     });
+                }
+
+                {
                     document.addEventListener("pointermove", (e)=> {
+                        if (this._scrollingX == e.pointerId) {
+                            const offsetX = window.convertPointFromPageToNode(this._trackX.parentNode, e.clientX, e.clientY).x - this._sX;
+                            this._trackX.style.setProperty("--offsetPercent", this._spcX = Math.min(Math.max((offsetX) / (this._trackX.parentNode.offsetWidth - this._trackX.offsetWidth), 0.0), 1.0), "");
+                            this._scrollable.scrollTo({
+                                left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
+                                behavior: "instant"
+                            });
+                        }
                         if (this._scrollingY == e.pointerId) {
                             const offsetY = window.convertPointFromPageToNode(this._trackY.parentNode, e.clientX, e.clientY).y - this._sY;
                             this._trackY.style.setProperty("--offsetPercent", this._spcY = Math.min(Math.max((offsetY) / (this._trackY.parentNode.offsetHeight - this._trackY.offsetHeight), 0.0), 1.0), "");
@@ -444,11 +444,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                             });
                         }
                     });
+
+                    //
                     document.addEventListener("pointerup", (e)=> {
-                        if (this._scrollingY == e.pointerId) {
-                            document.body.classList.remove("dragging");
-                            this._scrollingY = -1;
-                        }
+                        if (this._scrollingY == e.pointerId || this._scrollingX == e.pointerId) { document.body.classList.remove("dragging"); };
+                        if (this._scrollingY == e.pointerId) { this._scrollingY = -1; }
+                        if (this._scrollingX == e.pointerId) { this._scrollingX = -1; }
                     });
                 }
 
@@ -694,8 +695,35 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 `;
 
-                requestAnimationFrame(this._updateSize.bind(this));
-                document.addEventListener("DOMContentLoaded", this._updateSize.bind(this));
+                requestAnimationFrame(()=>{
+                    this._updateSize()._loadFromStorage()._saveToStorage()._updateScroll();
+                });
+                document.addEventListener("DOMContentLoaded", ()=>{
+                    this._updateSize()._loadFromStorage()._saveToStorage()._updateScroll();
+                });
+
+                //
+                return this;
+            }
+
+            _saveToStorage() {
+                if (this.hasAttribute("storage")) {
+                    if (this._spcX != null) { localStorage.setItem(this.getAttribute("storage") + "_scX", this._spcX); };
+                    if (this._spcY != null) { localStorage.setItem(this.getAttribute("storage") + "_scY", this._spcY); };
+                }
+                return this;
+            }
+
+            _loadFromStorage() {
+                if (this.hasAttribute("storage")) {
+                    if (this._spcX == null) { this._trackX.style.setProperty("--offsetPercent", this._spcX = localStorage.getItem(this.getAttribute("storage") + "_scX"), ""); };
+                    if (this._spcY == null) { this._trackY.style.setProperty("--offsetPercent", this._spcY = localStorage.getItem(this.getAttribute("storage") + "_scY"), ""); };
+                    this._scrollable.scrollTo({
+                        left: this._spcX * (this._scrollable.scrollWidth - this._scrollable.offsetWidth),
+                        top: this._spcY * (this._scrollable.scrollHeight - this._scrollable.offsetHeight),
+                        behavior: "instant"
+                    });
+                }
                 return this;
             }
 
@@ -718,7 +746,6 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 if (this._scrollCoefX >= 1) { tX.style.setProperty("opacity", "0.0", ""); tX.style.setProperty("pointer-events", "none", ""); } else { tX.style.removeProperty("opacity"); tX.style.removeProperty("pointer-events"); };
                 if (this._scrollCoefY >= 1) { tY.style.setProperty("opacity", "0.0", ""); tY.style.setProperty("pointer-events", "none", ""); } else { tY.style.removeProperty("opacity"); tY.style.removeProperty("pointer-events"); };
                 
-                this._updateScroll();
                 return this;
             }
 
@@ -727,8 +754,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
             }
 
             connectedCallback() {
-                requestAnimationFrame(this._updateSize.bind(this));
-                document.addEventListener("DOMContentLoaded", this._updateSize.bind(this));
+                requestAnimationFrame(()=>{
+                    this._updateSize()._loadFromStorage()._saveToStorage()._updateScroll();
+                });
+                document.addEventListener("DOMContentLoaded", ()=>{
+                    this._updateSize()._loadFromStorage()._saveToStorage()._updateScroll();
+                });
             }
 
             attributeChangedCallback(name, oldValue, newValue) {
