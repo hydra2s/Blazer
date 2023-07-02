@@ -458,7 +458,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._style.textContent = `
                 /* TODO: scrolling library! */
                 :host {
-                    // don't override!
+                    /* don't override! */
                     position: relative !important;
                     top: 0; bottom: 0; left: 0; right: 0;
                     display: inline-block;
@@ -467,16 +467,18 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     /* */
                     max-width: min(100%, 100vw);
                     max-height: min(100%, 100vh);
-                    min-height: min-content;
                     min-width: min-content;
+                    min-height: min-content;
 
-                    /*width: min(100%, 100vw);
-                      height: min(100%, 100vh);*/
-
-                    width: max-content;
-                    height: max-content;
+                    /* un-preferred */
+                    width: min(100%, 100vw);
+                    height: min(100%, 100vh);
                     padding: 0px;
                     margin: 0px;
+
+                    /* not supported... */
+                    /*width: max-content;
+                      height: max-content;*/
 
                     /* */
                     -webkit-user-select: none;
@@ -597,8 +599,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     max-height: min(100%, 100vh);
 
                     /* */
-                    min-height: 0px;//min-content;
-                    min-width: 0px;//min-content;
+                    min-height: min(100%, 100vw);//min-content;
+                    min-width: min(100%, 100vw);//min-content;
 
                     /* */
                     position: absolute;
