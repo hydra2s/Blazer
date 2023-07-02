@@ -345,6 +345,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._scrollable = document.createElement("div");
                 this._slot = document.createElement("slot");
                 this._style = document.createElement("style");
+                this._content = document.createElement("div");
 
                 //
                 window.addEventListener("beforeunload", this._saveToStorage.bind(this));
@@ -366,18 +367,22 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 this._scrollX.classList.add("scroll-x");
                 this._scrollY.classList.add("scroll-y");
                 this._scrollable.classList.add("scrollable");
+                this._content.classList.add("content");
 
                 //
                 this.attachShadow({ mode: "open" });
 
                 //
                 this._points.forEach((E)=>this.shadowRoot.appendChild(E));
-                this.shadowRoot.appendChild(this._style);
                 this.shadowRoot.appendChild(this._scrollX);
                 this.shadowRoot.appendChild(this._scrollY);
                 this.shadowRoot.appendChild(this._scrollable);
                 this._scrollX.appendChild(this._trackX);
                 this._scrollY.appendChild(this._trackY);
+                this.shadowRoot.appendChild(this._style);
+
+                //
+                //this.shadowRoot.style.display = "contents";
 
                 //
                 this.handleDrag = (e)=>{
@@ -454,7 +459,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 
                 //
-                this._scrollable.appendChild(this._slot);
+                this._scrollable.appendChild(this._content);
+                this._content.appendChild(this._slot);
                 this._style.textContent = `
                 /* TODO: scrolling library! */
                 :host {
@@ -465,20 +471,14 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     overflow: hidden;
 
                     /* */
-                    max-width: min(100%, 100vw);
-                    max-height: min(100%, 100vh);
-                    min-width: min-content;
-                    min-height: min-content;
+                    max-width: min(100cqw, 100vw);
+                    max-height: min(100cqh, 100vh);
 
-                    /* un-preferred */
-                    width: min(100%, 100vw);
-                    height: min(100%, 100vh);
+                    /* */
+                    width: max-content;
+                    height: max-content;
                     padding: 0px;
                     margin: 0px;
-
-                    /* not supported... */
-                    /*width: max-content;
-                      height: max-content;*/
 
                     /* */
                     -webkit-user-select: none;
@@ -521,7 +521,11 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 
                 /* Descended elements */
-                .top-left, .top-right, .bottom-left, .bottom-right {
+                :host > .top-left, 
+                :host > .top-right, 
+                :host > .bottom-left, 
+                :host > .bottom-right 
+                {
                     z-index: -1;
                     position: absolute;
                     pointer-events: none;
@@ -537,7 +541,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     visibility: hidden;
                 }
 
-                .top-right {
+                :host > .top-right {
                     top: calc(0px - var(--padding-top));
                     left: auto;
                     bottom: auto;
@@ -545,7 +549,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     float: right;
                 }
 
-                .top-left {
+                :host > .top-left {
                     top: calc(0px - var(--padding-top));
                     left: calc(0px - var(--padding-left));
                     bottom: auto;
@@ -553,7 +557,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     float: left;
                 }
 
-                .bottom-right {
+                :host > .bottom-right {
                     top: auto;
                     left: auto;
                     bottom: calc(0px - var(--padding-bottom));
@@ -561,7 +565,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     float: right;
                 }
 
-                .bottom-left {
+                :host > .bottom-left {
                     top: auto;
                     left: calc(0px - var(--padding-left));
                     bottom: calc(0px - var(--padding-bottom));
@@ -569,14 +573,18 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     float: left;
                 }
 
-                .scrollable {
+                :host > .scrollable > .content {
+                    display: contents;
+                }
+
+                :host > .scrollable {
                     /* */
                     -webkit-user-select: none;
                     -khtml-user-select: none;
                     -moz-user-select: none;
                     -o-user-select: none;
                     user-select: none;
-                
+
                     /* */
                     -webkit-user-drag: none;
                     -khtml-user-drag: none;
@@ -585,30 +593,25 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     user-drag: none;
 
                     /* */
+                    z-index: 0;
                     text-align: center;
                     position: relative;
                     top: 0; left: 0; right: 0; bottom: 0;
 
                     /* */
                     display: block;
-                    width: min(100%, 100vw);
-                    height: min(100%, 100vh);
 
                     /* */
-                    max-width: min(100%, 100vw);
-                    max-height: min(100%, 100vh);
+                    width: min(100cqw, 100vw);
+                    height: min(100cqh, 100vh);
 
                     /* */
-                    min-height: min(100%, 100vw);//min-content;
-                    min-width: min(100%, 100vw);//min-content;
+                    max-width: min(100cqw, 100vw);
+                    max-height: min(100cqh, 100vh);
 
                     /* */
-                    position: absolute;
-                    left: 0; top: 0; right: 0; bottom: 0;
- 
-                    /* */
-                    overflow: auto;
                     overflow: overlay;
+                    overflow: scroll;
                     touch-action: none;
 
                     /* */
@@ -618,35 +621,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     scroll-behavior: smooth;
                 }
 
-                .scroll-y .track {
-                    --offsetPercent: 0.0;
-
-                    width: 100%;
-                    height: var(--ownSize);
-                    transform: translateY(
-                        calc(
-                            var(--offsetPercent) * 
-                            calc(100% - var(--ownSize))
-                        )
-                    );
-                }
-
-                .scroll-x .track {
-                    --offsetPercent: 0.0;
-
-                    height: 100%;
-                    width: var(--ownSize);
-                    transform: translateX(
-                        calc(
-                            var(--offsetPercent) * 
-                            calc(var(100% - var(--ownSize))
-                        )
-                    );
-                }
-
                 /* */
-                .scroll-y {
-                    height: calc(100% - 1rem);
+                :host > .scroll-y {
+                    height: calc(100cqh - 1rem);
                     width: 1rem;
 
                     top: 0px;
@@ -655,8 +632,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
                 
                 /* */
-                .scroll-x {
-                    width: calc(100% - 1rem);
+                :host > .scroll-x {
+                    width: calc(100cqw - 1rem);
                     height: 1rem;
                     
                     left: 0px;
@@ -665,7 +642,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 
                 /* */
-                .scroll-x, .scroll-y {
+                :host > .scroll-x, 
+                :host > .scroll-y 
+                {
                     overflow: hidden;
                     position: absolute;
                     background-color: transparent;
@@ -673,8 +652,38 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     z-index: 9999;
                 }
                 
+
+                
+                :host > .scroll-y > .track {
+                    --offsetPercent: 0.0;
+
+                    width: cqw;
+                    height: var(--ownSize);
+                    transform: translateY(
+                        calc(
+                            var(--offsetPercent) * 
+                            calc(100cqh - var(--ownSize))
+                        )
+                    );
+                }
+
+                :host > .scroll-x > .track {
+                    --offsetPercent: 0.0;
+
+                    height: cqh;
+                    width: var(--ownSize);
+                    transform: translateX(
+                        calc(
+                            var(--offsetPercent) * 
+                            calc(100cqw - var(--ownSize))
+                        )
+                    );
+                }
+
                 /* */
-                .scroll-x .track, .scroll-y .track {
+                :host > .scroll-x > .track, 
+                :host > .scroll-y > .track 
+                {
                     /* for touch screen */
                     /*position: sticky; */
 
@@ -693,7 +702,9 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     user-select: none;
                 }
 
-                .scroll-x .track:active, .scroll-y .track:active {
+                :host > .scroll-x > .track:active, 
+                :host > .scroll-y > .track:active 
+                {
                     cursor: move; /* fallback: no url() support or images disabled */
                     cursor: -webkit-grabbing; /* Chrome 1-21, Safari 4+ */
                     cursor:    -moz-grabbing; /* Firefox 1.5-26 */
@@ -786,17 +797,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 super();
 
                 //
-                this._scrollX = document.createElement("div");
-                this._scrollY = document.createElement("div");
                 this._scrollable = document.createElement("div");
                 this._slot = document.createElement("slot");
                 this._style = document.createElement("style");
-
-                //
-                this._scrollX.classList.add("scroll-x");
-                this._scrollY.classList.add("scroll-y");
                 this._scrollable.classList.add("scrollable");
 
+                //
                 const E = this._scrollable;
                 E.addEventListener("wheel", (e)=>{
                     e.preventDefault();
@@ -808,58 +814,47 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
 
                 //
                 this.attachShadow({ mode: "open" });
-                this.shadowRoot.appendChild(this._style);
-                this.shadowRoot.appendChild(this._scrollX);
-                this.shadowRoot.appendChild(this._scrollY);
                 this.shadowRoot.appendChild(this._scrollable);
-
-                //
                 this._scrollable.appendChild(this._slot);
+                this.shadowRoot.appendChild(this._style);
+
                 this._style.textContent = `
                 /* TODO: scrolling library! */
                 :host {
                     min-width: min-content;
                     min-height: min-content;
 
+                    /* */
                     width: min-content;
                     height: min-content;
 
-                    max-width: min(100%, 100vw);
-                    max-height: min(100%, 100vh);
+                    /* */
+                    max-width: min(min(100cqw, 100vw), 100%);
+                    max-height: min(min(100cqh, 100vh), 100%);
 
+                    /* */
                     display: inline-block;
                     position: relative;
                     overflow: hidden;
-
+                    
+                    /* */
                     padding: 0px;
                     margin: 0px;
-
-                    
                 }
 
-                .scrollable > ::slotted(*) {
-                    flex: 0 0 100%;
-                    aspect-ratio: 16 / 9;
-                
-                    max-width: min(100%, 100vw);
-                    max-height: min(100%, 100vh);
+                :host > .scrollable {
+                    min-width: min-content;
+                    min-height: min-content;
 
-                    left: 0px;
-                    top: 0px;
-                    bottom: 0px;
-                    right: 0px;
-                    display: inline-block;
-                    overflow: hidden;
-                
                     /* */
-                    margin: 0;
-                    padding: 0;
-                
+                    max-width: min(min(100cqw, 100vw), 100%);
+                    max-height: min(min(100cqh, 100vh), 100%);
+
                     /* */
-                    scroll-snap-align: center;
-                }
-                
-                .scrollable {
+                    width: min(min(100cqw, 100vw), 100%);
+                    height: min(min(100cqh, 100vh), 100%);
+
+                    /* */
                     display: inline-flex;
                     flex-direction: row;
 
@@ -886,6 +881,39 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     padding: 0;
                 }
 
+                :host > .scrollable > ::slotted(*) {
+                    flex: 0 0 100%;
+                    aspect-ratio: 16 / 9;
+
+                    /* */
+                    min-width: min-content;
+                    min-height: min-content;
+
+                    /* */
+                    max-width: min(min(100cqw, 100vw), 100%);
+                    max-height: min(min(100cqh, 100vh), 100%);
+
+                    /* */
+                    width: min(min(100cqw, 100vw), 100%);
+                    height: min(min(100cqh, 100vh), 100%);
+
+                    /* */
+                    left: 0px;
+                    top: 0px;
+                    bottom: 0px;
+                    right: 0px;
+                    display: inline-block;
+                    overflow: hidden;
+                
+                    /* */
+                    margin: 0;
+                    padding: 0;
+                
+                    /* */
+                    scroll-snap-align: center;
+                }
+                
+                
 `;
 
                 //
