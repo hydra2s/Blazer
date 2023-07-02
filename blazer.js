@@ -460,21 +460,21 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 :host {
                     // don't override!
                     position: relative !important;
+                    top: 0; bottom: 0; left: 0; right: 0;
+                    display: inline-block;
+                    overflow: hidden;
 
                     /* */
+                    max-width: min(100%, 100vw);
+                    max-height: min(100%, 100vh);
                     min-height: min-content;
                     min-width: min-content;
 
-                    width: min(100%, 100vw);
-                    height: min(100%, 100vh);
+                    /*width: min(100%, 100vw);
+                      height: min(100%, 100vh);*/
 
-                    max-width: min(100%, 100vw);
-                    max-height: min(100%, 100vh);
-
-                    display: inline-block;
-                    position: relative;
-                    overflow: hidden;
-
+                    width: max-content;
+                    height: max-content;
                     padding: 0px;
                     margin: 0px;
 
@@ -583,11 +583,12 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     user-drag: none;
 
                     /* */
-                    display: block;
                     text-align: center;
                     position: relative;
+                    top: 0; left: 0; right: 0; bottom: 0;
 
                     /* */
+                    display: block;
                     width: min(100%, 100vw);
                     height: min(100%, 100vh);
 
@@ -599,14 +600,15 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     min-height: 0px;//min-content;
                     min-width: 0px;//min-content;
 
+                    /* */
                     position: absolute;
                     left: 0; top: 0; right: 0; bottom: 0;
-                
+ 
                     /* */
                     overflow: auto;
                     overflow: overlay;
                     touch-action: none;
-                
+
                     /* */
                     scrollbar-gutter: stable both-edges;
                     scrollbar-width: thin;
@@ -675,6 +677,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     /*position: sticky; */
 
                     /* */
+                    overflow: hidden;
                     background-color: rgba(0, 0, 0, 0.5);
                     cursor: grab;
                     display: block;
