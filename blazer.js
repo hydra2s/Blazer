@@ -622,7 +622,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     transform: translateY(
                         calc(
                             var(--offsetPercent) * 
-                            calc(var(--parentSize) - var(--ownSize))
+                            calc(100% - var(--ownSize))
                         )
                     );
                 }
@@ -635,7 +635,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     transform: translateX(
                         calc(
                             var(--offsetPercent) * 
-                            calc(var(--parentSize) - var(--ownSize))
+                            calc(var(100% - var(--ownSize))
                         )
                     );
                 }
@@ -671,13 +671,14 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 
                 /* */
                 .scroll-x .track, .scroll-y .track {
-                    /* important! */
-                    position: sticky;
+                    /* for touch screen */
+                    /*position: sticky; */
+
+                    /* */
                     background-color: rgba(0, 0, 0, 0.5);
                     cursor: grab;
                     display: block;
                     pointer-events: auto;
-                    
 
                     /* */
                     -webkit-user-select: none;
