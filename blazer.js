@@ -574,7 +574,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 }
 
                 :host > .scrollable > .content {
-                    display: contents;
+                    display: inline-block;
                 }
 
                 :host > .scrollable {
@@ -612,7 +612,7 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     /* */
                     overflow: overlay;
                     overflow: scroll;
-                    touch-action: none;
+                    touch-action: pan-x pan-y;
 
                     /* */
                     scrollbar-gutter: stable both-edges;

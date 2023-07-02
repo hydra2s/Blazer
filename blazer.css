@@ -184,7 +184,7 @@ body {
     overflow: hidden;
     box-sizing: border-box;
     text-align: center;
-    touch-action: none;
+    touch-action: pan-x pan-y;
     margin: 0;
     padding: 0;
 }
