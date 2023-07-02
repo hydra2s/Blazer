@@ -159,8 +159,10 @@ html {
     overflow: hidden;
     box-sizing: border-box;
     text-align: center;
+    touch-action: none;
     margin: 0;
     padding: 0;
+    
 }
 
 body {
@@ -354,8 +356,19 @@ a, span {
     width: 100%;
 }
 
+.swipe {
+    overflow: hidden;
+    visibility: hidden;
+    position: relative;
+}
 
+.swipe-wrap {
+    overflow: hidden;
+    position: relative;
+}
 
-
-
-
+.swipe-wrap > div {
+    float: left;
+    width: 100%;
+    position: relative;
+}

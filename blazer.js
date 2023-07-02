@@ -469,14 +469,21 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     top: 0; bottom: 0; left: 0; right: 0;
                     display: inline-block;
                     overflow: hidden;
+                    touch-action: none;
 
                     /* */
-                    max-width: min(100cqw, 100vw);
-                    max-height: min(100cqh, 100vh);
+                    max-width: min(min(100cqw, 100vw), 100%);
+                    max-height: min(min(100cqh, 100vh), 100%);
 
                     /* */
-                    width: max-content;
-                    height: max-content;
+                    width: min(min(100cqw, 100vw), 100%);
+                    height: min(min(100cqh, 100vh), 100%);
+
+                    /* */
+                    min-width: min-content;
+                    min-height: min-content;
+
+                    /* */
                     padding: 0px;
                     margin: 0px;
 
@@ -602,29 +609,29 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                     display: block;
 
                     /* */
-                    width: min(100cqw, 100vw);
-                    height: min(100cqh, 100vh);
+                    width: min(min(100cqw, 100vw), 100%);
+                    height: min(min(100cqh, 100vh), 100%);
 
                     /* */
-                    max-width: min(100cqw, 100vw);
-                    max-height: min(100cqh, 100vh);
+                    max-width: min(min(100cqw, 100vw), 100%);
+                    max-height: min(min(100cqh, 100vh), 100%);
 
                     /* */
                     overflow: overlay;
                     overflow: scroll;
-                    touch-action: pan-x pan-y;
 
                     /* */
                     scrollbar-gutter: stable both-edges;
                     scrollbar-width: thin;
                     scrollbar-width: none;
                     scroll-behavior: smooth;
+                    touch-action: none;
                 }
 
                 /* */
                 :host > .scroll-y {
-                    height: calc(100cqh - 1rem);
-                    width: 1rem;
+                    height: calc(100cqh - min(1vh, 1vw));
+                    width: min(1vh, 1vw);
 
                     top: 0px;
                     right: 0px;
@@ -633,8 +640,8 @@ if (!(typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && 
                 
                 /* */
                 :host > .scroll-x {
-                    width: calc(100cqw - 1rem);
-                    height: 1rem;
+                    width: calc(100cqw - min(1vh, 1vw));
+                    height: min(1vh, 1vw);
                     
                     left: 0px;
                     bottom: 0px;
