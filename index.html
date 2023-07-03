@@ -25,7 +25,7 @@
         OverlayScrollbars(document.querySelector('body'), { overflow: { x: 'hidden' } });
     </script>-->
 </head>
-<body><scroll-able storage="body">
+<body><scroll-able storage="body" pinch-and-zoom="false">
 
     <h1>Blazer Main Page</h1>
 
@@ -37,6 +37,11 @@
         <img src="test/2.jpg" alt="IMG-2" loading="lazy" decoding="async"/>
         <img src="test/3.jpg" alt="IMG-3" loading="lazy" decoding="async"/>
     </slider-x>
+
+    <!--
+    <drag-able storage="drag-0"></drag-able>
+    <drag-able storage="drag-1"></drag-able>
+    -->
 
     <!--<scroll-able style="width: min(80%, 800px); height: 600px; transform: rotate(10deg)">
         <div style="width: 1920px; height: 1080px;"></div>

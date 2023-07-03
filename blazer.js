@@ -7,6 +7,7 @@ import { OpenMNG, MNGRenderer } from "./lib/openmng.js"
 import { Zoom } from "./lib/zoom-mod.js"
 import { convertPointFromPageToNode } from "./lib/geometry-utils.js"
 import { Scrollable } from "./lib/scrollable.js"
+import { Draggable } from "./lib/draggable.js"
 import { SliderX } from "./lib/slider-x.js"
 import { JNGImage } from "./lib/jng-img.js"
 
