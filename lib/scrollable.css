@@ -1,0 +1,293 @@
+/* TODO: scrolling library! */
+:host {
+    /* don't override! */
+    position: relative !important;
+    top: 0; bottom: 0; left: 0; right: 0;
+    display: inline-block;
+    overflow: hidden !important;
+    touch-action: none;
+    scrollbar-width: none !important;
+
+    /* */
+    max-width: min(min(100cqw, 100vw), 100%);
+    max-height: min(min(100cqh, 100vh), 100%);
+
+    /* */
+    width: min(min(100cqw, 100vw), 100%);
+    height: min(min(100cqh, 100vh), 100%);
+
+    /* */
+    min-width: min-content;
+    min-height: min-content;
+
+    /* */
+    padding: 0px;
+    margin: 0px;
+
+    /* */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    /* */
+    --padding-left: 0px;
+    --padding-right: 0px;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+}
+
+:host, :host * {
+    /* */
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    font-smooth: always;
+    text-rendering: optimizeLegibility;
+    text-rendering: geometricPrecision;
+
+    /* */
+    -webkit-perspective: 1000;
+    -moz-perspective: 1000;
+    -ms-perspective: 1000;
+    perspective: 1000;
+
+    /* */
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    /* Enable hardware acceleration */
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+
+    /* */
+    transform-origin: 50% 50%;
+
+    /* Some filter hack */
+    filter: opacity(100%);
+    overflow: hidden;
+    scrollbar-width: none;
+    box-sizing: border-box;
+
+    /* Disable transition by default */
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+}
+
+/* Descended elements */
+:host > .top-left, 
+:host > .top-right, 
+:host > .bottom-left, 
+:host > .bottom-right 
+{
+    z-index: -1;
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    display: block;
+    width: 0;
+    height: 0;
+    line-height: 0;
+    overflow: hidden;
+    color: transparent;
+    background-color: transparent;
+    content-visibility: hidden;
+    visibility: hidden;
+    box-sizing: border-box;
+}
+
+:host > .top-right {
+    top: calc(0px - var(--padding-top));
+    left: auto;
+    bottom: auto;
+    right: calc(0px - var(--padding-right));
+    float: right;
+}
+
+:host > .top-left {
+    top: calc(0px - var(--padding-top));
+    left: calc(0px - var(--padding-left));
+    bottom: auto;
+    right: auto;
+    float: left;
+}
+
+:host > .bottom-right {
+    top: auto;
+    left: auto;
+    bottom: calc(0px - var(--padding-bottom));
+    right: calc(0px - var(--padding-right));
+    float: right;
+}
+
+:host > .bottom-left {
+    top: auto;
+    left: calc(0px - var(--padding-left));
+    bottom: calc(0px - var(--padding-bottom));
+    right: auto;
+    float: left;
+}
+
+:host > .scrollable > .content {
+    display: inline-block;
+    position: relative !important;
+    /*position: sticky;*/ /* Badly works... */
+    top: 0; left: 0; right: 0; bottom: 0;
+    min-width: min-content;
+    min-height: min-content;
+    overflow: visible;
+    box-sizing: border-box;
+}
+
+/* work-around for chrome */
+:host > .scrollable::-webkit-scrollbar {
+    -webkit-appearance: none;
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+:host > .scrollable {
+    /* */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    /* */
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+
+    /* */
+    z-index: 0;
+    text-align: center;
+    position: relative;
+    top: 0; left: 0; right: 0; bottom: 0;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+    /* */
+    display: block;
+
+    /* */
+    width: min(min(100cqw, 100vw), 100%);
+    height: min(min(100cqh, 100vh), 100%);
+
+    /* */
+    max-width: min(min(100cqw, 100vw), 100%);
+    max-height: min(min(100cqh, 100vh), 100%);
+    
+    /* */
+    overflow: auto !important;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    touch-action: none;
+}
+
+/* */
+:host > .scroll-x, 
+:host > .scroll-y 
+{
+    box-sizing: border-box;
+    overflow: hidden;
+    position: absolute;
+    background-color: transparent;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* */
+:host > .scroll-x > .track, 
+:host > .scroll-y > .track 
+{
+    /* for touch screen */
+    /*position: sticky; */
+
+    /* */
+    box-sizing: border-box;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: grab;
+    display: block;
+    pointer-events: auto;
+
+    /* */
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+:host > .scroll-x > .track:active, 
+:host > .scroll-y > .track:active 
+{
+    cursor: move; /* fallback: no url() support or images disabled */
+    cursor: -webkit-grabbing; /* Chrome 1-21, Safari 4+ */
+    cursor:    -moz-grabbing; /* Firefox 1.5-26 */
+    cursor:         grabbing; /* W3C standards syntax, should come least */
+}
+
+
+/* */
+:host > .scroll-y {
+    height: calc(min(100cqh, 100%) - min(1vh, 1vw));
+    width: min(1vh, 1vw);
+
+    top: 0px;
+    right: 0px;
+    left: auto;
+}
+
+/* */
+:host > .scroll-x {
+    width: calc(min(100cqw, 100%) - min(1vh, 1vw));
+    height: min(1vh, 1vw);
+    
+    left: 0px;
+    bottom: 0px;
+    top: auto;
+}
+
+:host > .scroll-y > .track {
+    --offsetPercent: 0.0;
+
+    width: min(100cqw, 100%);
+    height: var(--ownSize);
+    will-change: transform, height;
+    transform: translateY(
+        calc(
+            var(--offsetPercent) * 
+            calc(100cqh - var(--ownSize))
+        )
+    ) translateZ(0);
+}
+
+:host > .scroll-x > .track {
+    --offsetPercent: 0.0;
+
+    height: min(100cqh, 100%);
+    width: var(--ownSize);
+    will-change: transform, width;
+    transform: translateX(
+        calc(
+            var(--offsetPercent) * 
+            calc(100cqw - var(--ownSize))
+        )
+    ) translateZ(0);
+}
