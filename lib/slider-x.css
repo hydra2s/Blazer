@@ -23,6 +23,9 @@
     /* */
     padding: 0px;
     margin: 0px;
+
+    /* */
+    will-change: scroll-position, transform;
 }
 
 /* work-around for chrome */
@@ -39,6 +42,7 @@
 :host > .scrollable {
     position: relative;
     top: 0; left: 0; right: 0; bottom: 0;
+    will-change: scroll-position, transform;
 
     /* */
     min-width: min-content;

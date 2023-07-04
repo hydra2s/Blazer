@@ -47,7 +47,7 @@ body, h1, h2, h3, h4, h5, h6, p, div {
 
     /* */
     background-color: transparent;
-    will-change: content, transform;
+    will-change: contents, content, transform;
     filter: opacity(100%);
 
     /* */
@@ -262,7 +262,7 @@ div, span, a, p {
 /* Correct behaviour of images, videos, canvas */
 img, video, canvas, svg, embed, object {
     /* Lazy scrolling fix */
-    will-change: content, transform;
+    will-change: contents, content, transform;
     min-width: 1px; min-height: 1px;
 
     /* Multi-Layering purpose default */
@@ -345,7 +345,7 @@ picture {
 /* */
 img:not([src]), img[src=""] {
     /*--display: none;*/
-    will-change: content, transform;
+    will-change: contents, content, transform;
     --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
     content-visibility: hidden;
     content: var(--content);
@@ -357,7 +357,7 @@ img:not([src]), img[src=""] {
 
 /* */
 img[src$=".jng"] {
-    will-change: content, transform;
+    will-change: contents, content, transform;
     --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
     content: var(--content);
 }

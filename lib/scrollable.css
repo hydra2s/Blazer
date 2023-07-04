@@ -143,6 +143,7 @@
     min-height: min-content;
     overflow: visible;
     box-sizing: border-box;
+    will-change: scroll-position;
 }
 
 /* work-around for chrome */
@@ -157,6 +158,8 @@
 }
 
 :host > .scrollable {
+    will-change: scroll-position;
+
     /* */
     -webkit-user-select: none;
     -khtml-user-select: none;
