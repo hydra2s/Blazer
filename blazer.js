@@ -9,6 +9,7 @@ import { convertPointFromPageToNode } from "./lib/geometry-utils.js"
 import { Scrollable } from "./lib/scrollable.js"
 import { Draggable } from "./lib/draggable.js"
 import { SliderX } from "./lib/slider-x.js"
+import { MarkDown } from "./lib/mark-down.js"
 import { JNGImage } from "./lib/jng-img.js"
 
 //

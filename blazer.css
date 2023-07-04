@@ -15,7 +15,7 @@
 }
 
 /* Better Text Format */
-body, p, h1, h2, h3, h4, h5, h6, a, span {
+body, p, h1, h2, h3, h4, h5, h6, a, span, .text {
     width: max-content;
     max-width: 100cqw;
     word-break: break-all;
@@ -229,7 +229,7 @@ body > div, body > p {
 }
 
 /* Protect from naive copy or selection */
-div, span, a, p {
+div, span, a, p, .text {
     /* */
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -407,6 +407,10 @@ a, span {
     position: relative;
 }
 
+mark-down {
+    display: none;
+}
+
 drag-able {
     display: none;
 }
@@ -417,6 +421,10 @@ scroll-able {
 
 slider-x {
     display: none;
+}
+
+mark-down.text, mark-down.mark-down {
+    display: inline-block;
 }
 
 drag-able.drag-able {
