@@ -193,10 +193,16 @@
     
     /* */
     overflow: auto !important;
-    scrollbar-gutter: stable both-edges;
-    scrollbar-width: none;
+    scrollbar-gutter: auto;
     scroll-behavior: smooth;
     touch-action: none;
+}
+
+@supports (scrollbar-width: none) {
+    :host > .scrollable {
+        scrollbar-gutter: stable both-edges;
+        scrollbar-width: none;
+    }
 }
 
 /* */

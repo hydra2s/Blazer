@@ -77,12 +77,19 @@ body, h1, h2, h3, h4, h5, h6, p, div {
 
     /*  */
     overflow: hidden;
-    scrollbar-gutter: stable both-edges;
+    scrollbar-gutter: auto;
     scrollbar-width: none;
 
     /* */
     object-fit: contain;
     object-position: center;
+}
+
+@supports (scrollbar-width: none) {
+    .hardware, img, canvas, video, svg, picture, embed, object {
+        scrollbar-gutter: stable both-edges;
+        scrollbar-width: none;
+    }
 }
 
 * {
@@ -129,8 +136,7 @@ body, h1, h2, h3, h4, h5, h6, p, div {
 
     /* use overlay scroll-bars library */
     overflow: hidden;
-    scrollbar-gutter: stable both-edges;
-    scrollbar-width: thin;
+    scrollbar-gutter: auto;
     scrollbar-width: none;
     scroll-behavior: smooth;
 
@@ -139,6 +145,23 @@ body, h1, h2, h3, h4, h5, h6, p, div {
     -moz-transition: none;
     -o-transition: none;
     transition: none;
+}
+
+*::-webkit-scrollbar {
+    -webkit-appearance: none;
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+@supports (scrollbar-width: none) {
+    * {
+        scrollbar-gutter: stable both-edges;
+        scrollbar-width: none;
+    }
 }
 
 *.dragging, .dragging * {
@@ -307,7 +330,10 @@ img, video, canvas, svg, embed, object {
     /*  */
     overflow: hidden;
     scrollbar-gutter: auto;
+    scrollbar-width: none;
 }
+
+
 
 /* */
 picture {

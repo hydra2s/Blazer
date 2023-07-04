@@ -25,6 +25,17 @@
     margin: 0px;
 }
 
+/* work-around for chrome */
+:host > .scrollable::-webkit-scrollbar {
+    -webkit-appearance: none;
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
 :host > .scrollable {
     position: relative;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -50,9 +61,7 @@
     overflow-y: hidden;
     overflow-x: scroll;
     touch-action: pan-x !important;
-    scrollbar-gutter: stable both-edges;
-    scrollbar-width: thin;
-    scrollbar-width: none;
+    scrollbar-gutter: auto;
     scroll-behavior: smooth;
     scroll-snap-type: x mandatory;
     scroll-margin-left: 0;
@@ -60,6 +69,13 @@
     /* */
     margin: 0;
     padding: 0;
+}
+
+@supports (scrollbar-width: none) {
+    :host > .scrollable {
+        scrollbar-gutter: stable both-edges;
+        scrollbar-width: none;
+    }
 }
 
 :host > .scrollable > ::slotted(*) {
