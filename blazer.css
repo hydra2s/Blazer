@@ -380,3 +380,27 @@ a, span {
     width: 100%;
     position: relative;
 }
+
+drag-able {
+    display: none;
+}
+
+scroll-able {
+    display: none;
+}
+
+slider-x {
+    display: none;
+}
+
+drag-able.drag-able {
+    display: inline-block;
+}
+
+scroll-able.scroll-able {
+    display: inline-block;
+}
+
+slider-x.slider-x {
+    display: inline-block;
+}
