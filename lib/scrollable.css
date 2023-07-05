@@ -232,7 +232,7 @@
     overflow: hidden;
     background-color: rgba(0, 0, 0, 0.5);
     cursor: grab;
-    display: block;
+    display: inline-block;
     pointer-events: auto;
 
     /* */
