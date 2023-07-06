@@ -17,7 +17,7 @@
 /* Better Text Format */
 body, p, h1, h2, h3, h4, h5, h6, a, span, .text {
     width: max-content;
-    max-width: 100cqw;
+    max-width: min(min(100cqw, 9999px), 100%);
     word-break: break-all;
     overflow-wrap: anywhere;
     white-space: pre-line;
@@ -186,11 +186,11 @@ html {
     /* */
     display: block;
     position: relative;
-    width: 100vw;
-    max-width: 100vw;
-    min-width: 100vw;
-    min-height: 100vh;
-    max-height: 100vh;
+    width: min(100vw, 9999px);
+    max-width: min(100vw, 9999px);
+    min-width: min(100vw, 9999px);
+    min-height: min(100vh, 9999px);
+    max-height: min(100vh, 9999px);
     overflow: hidden;
     box-sizing: border-box;
     text-align: center;
@@ -211,12 +211,12 @@ body {
     /* */
     display: block;
     position: relative;
-    width: 100vw;
-    height: 100vh;
-    max-width: 100vw;
-    min-width: 100vw;
-    min-height: 100vh;
-    max-height: 100vh;
+    width: min(100vw, 9999px);
+    height: min(100vh, 9999px);
+    max-width: min(100vw, 9999px);
+    min-width: min(100vw, 9999px);
+    min-height: min(100vh, 9999px);
+    max-height: min(100vh, 9999px);
     overflow: hidden;
     box-sizing: border-box;
     text-align: center;
@@ -383,8 +383,8 @@ a, span {
     gap: 1rem;
     grid-gap: 1rem;
     display: grid;
-    width: min(min(100cqw, 100vw), 100%);
-    max-width: min(min(100cqw, 100vw), 100%);
+    width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    max-width: min(min(min(100cqw, 9999px), 100vw), 100%);
     box-sizing: border-box;
     text-align: center;
     align-items: start;

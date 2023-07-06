@@ -10,8 +10,8 @@
     min-height: min-content;
 
     /* */
-    max-width: min(min(100cqw, 100vw), 100%);
-    max-height: min(min(100cqh, 100vh), 100%);
+    max-width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    max-height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
     overflow: hidden;
@@ -49,12 +49,12 @@
     min-height: min-content;
 
     /* */
-    max-width: min(min(100cqw, 100vw), 100%);
-    max-height: min(min(100cqh, 100vh), 100%);
+    max-width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    max-height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
-    width: min(min(100cqw, 100vw), 100%);
-    height: min(min(100cqh, 100vh), 100%);
+    width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
     display: inline-flex;
@@ -91,12 +91,12 @@
     min-height: min-content;
 
     /* */
-    max-width: min(min(100cqw, 100vw), 100%);
-    max-height: min(min(100cqh, 100vh), 100%);
+    max-width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    max-height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
-    width: min(min(100cqw, 100vw), 100%);
-    height: min(min(100cqh, 100vh), 100%);
+    width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
     left: 0px;

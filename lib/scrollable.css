@@ -10,12 +10,12 @@
     white-space: nowrap;
 
     /* */
-    max-width: min(min(100cqw, 100vw), 100%);
-    max-height: min(min(100cqh, 100vh), 100%);
+    max-width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    max-height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
-    width: min(min(100cqw, 100vw), 100%);
-    height: min(min(100cqh, 100vh), 100%);
+    width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
     min-width: min-content;
@@ -141,8 +141,8 @@
     display: block;
     position: relative !important;
     top: 0; left: 0; right: 0; bottom: 0;
-    min-width: min(100cqw, 100%);
-    min-height: min(100cqh, 100%);
+    min-width: min(min(100cqw, 9999px), 100%);
+    min-height: min(min(100cqh, 9999px), 100%);
     width: min-content;
     height: min-content;
     overflow: visible;
@@ -192,12 +192,12 @@
     display: block;
 
     /* */
-    width: min(min(100cqw, 100vw), 100%);
-    height: min(min(100cqh, 100vh), 100%);
+    width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    height: min(min(min(100cqh, 9999px), 100vh), 100%);
 
     /* */
-    max-width: min(min(100cqw, 100vw), 100%);
-    max-height: min(min(100cqh, 100vh), 100%);
+    max-width: min(min(min(100cqw, 9999px), 100vw), 100%);
+    max-height: min(min(min(100cqh, 9999px), 100vh), 100%);
     
     /* */
     overflow: auto !important;
@@ -257,7 +257,7 @@
 
 /* */
 :host > .scroll-y {
-    height: calc(min(100cqh, 100%) - min(1vh, 1vw));
+    height: calc(min(min(100cqh, 9999px), 100%) - min(1vh, 1vw));
     width: min(1vh, 1vw);
 
     top: 0px;
@@ -267,7 +267,7 @@
 
 /* */
 :host > .scroll-x {
-    width: calc(min(100cqw, 100%) - min(1vh, 1vw));
+    width: calc(min(min(100cqw, 9999px), 100%) - min(1vh, 1vw));
     height: min(1vh, 1vw);
     
     left: 0px;
@@ -278,13 +278,13 @@
 :host > .scroll-y > .track {
     --offsetPercent: 0.0;
 
-    width: min(100cqw, 100%);
+    width: min(min(100cqw, 9999px), 100%);
     height: var(--ownSize);
     will-change: transform, height;
     transform: translateY(
         calc(
             var(--offsetPercent) * 
-            calc(100cqh - var(--ownSize))
+            calc(min(100cqh, 9999px) - var(--ownSize))
         )
     ) translateZ(0);
 }
@@ -292,13 +292,13 @@
 :host > .scroll-x > .track {
     --offsetPercent: 0.0;
 
-    height: min(100cqh, 100%);
+    height: min(min(100cqh, 9999px), 100%);
     width: var(--ownSize);
     will-change: transform, width;
     transform: translateX(
         calc(
             var(--offsetPercent) * 
-            calc(100cqw - var(--ownSize))
+            calc(min(100cqw, 9999px) - var(--ownSize))
         )
     ) translateZ(0);
 }
