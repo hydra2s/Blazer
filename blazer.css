@@ -20,7 +20,7 @@ body, p, h1, h2, h3, h4, h5, h6, a, span, .text {
     max-width: 100cqw;
     word-break: break-all;
     overflow-wrap: anywhere;
-    white-space: break-spaces;
+    white-space: pre-line;
     text-align: justify;
     padding: 0;
     margin: 0;
@@ -28,6 +28,12 @@ body, p, h1, h2, h3, h4, h5, h6, a, span, .text {
 
 body, h1, h2, h3, h4, h5, h6, p, div {
     display: inline-block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    word-break: nowrap;
+    padding: 0;
+    margin: 0;
 }
 
 .hardware, img, canvas, video, svg, picture, embed, object {
@@ -264,6 +270,7 @@ img, video, canvas, svg, embed, object {
     /* Lazy scrolling fix */
     will-change: contents, content, transform;
     min-width: 1px; min-height: 1px;
+    white-space: nowrap;
 
     /* Multi-Layering purpose default */
     background-clip: content-box;

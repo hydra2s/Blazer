@@ -18,37 +18,59 @@
     <script async src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" crossorigin="anonymous"></script>
 
 </head>
-<body><scroll-able storage="body">
+<body>
 
-    <h1>JNG - chapter III</h1>
-
-    <div id="view">
-        <img id="jng" is="img-jng" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" srcjng=""/>
-    </div>
-
-    <div id="drop-area">
-<form class="my-form">
+    <h1>JNG image format - chapter III</h1>
+    
+<div id="drop-area"><form class="my-form">
 <p>Pick-up your JNG image file...</p>
-<input type="file" id="fileElem">
+<input type="file" id="fileElem" accept="image/x-jng, .jng">
 <label class="button" for="fileElem">Select some files</label>
-</form>
-    </div>
+</form></div>
+
+<div id="view"><img id="jng" is="img-jng" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" srcjng=""/></div>
 
     <style>
-        #view {
-            object-fit: contain;
+        #view img {
+            aspect-ratio: auto;
+            line-height: 0;
+            padding: 0;
+            margin: 0 auto;
+            min-width: 0px;
+            max-height: 0px;
+            max-width: 100%;
+            max-height: 100%;
             width: max-content;
             height: max-content;
-            max-width: min(80vw, 80%);
-            max-height: 60vh;
+            object-position: center;
+            object-fit: contain;
+            display: inline-block;
+        }
+
+        #view {
+            text-align: center;
+            background-color: transparent;
+            width: min(1200px, 90%);
+            height: min(800px, 60%);
+            position: relative;
+            white-space: nowrap;
+            padding: 0;
+            margin: 0;
+            line-height: 0;
+            display: inline-block;
             box-sizing: border-box;
+            overflow: hidden;
         }
 
         #drop-area {
+            text-align: center;
+            min-width: min(40vw, 40%);
+            max-width: min(80vw, 80%);
+            width: max-content;
+            height: max-content;
             box-sizing: border-box;
             border: 2px dashed #ccc;
             border-radius: 20px;
-            width: 480px;
             font-family: sans-serif;
             padding: 20px;
         }
@@ -98,13 +120,13 @@
         ;['dragenter', 'dragover'].forEach(eventName => {
             dropArea.addEventListener(eventName, ()=>{
                 dropArea.classList.add('highlight')
-            }, false)
+            })
         })
 
         ;['dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, ()=>{
                 dropArea.classList.remove('highlight')
-            }, false)
+            })
         })
 
         //
@@ -127,5 +149,5 @@
 
     </script>
 
-</scroll-able></body>
+</body>
 </html>

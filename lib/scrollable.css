@@ -7,6 +7,7 @@
     overflow: hidden !important;
     touch-action: none;
     scrollbar-width: none !important;
+    white-space: nowrap;
 
     /* */
     max-width: min(min(100cqw, 100vw), 100%);
@@ -100,6 +101,7 @@
     content-visibility: hidden;
     visibility: hidden;
     box-sizing: border-box;
+    white-space: nowrap;
 }
 
 :host > .top-right {
@@ -135,12 +137,14 @@
 }
 
 :host > .scrollable > .content {
-    display: inline-block;
+    white-space: pre-line;
+    display: block;
     position: relative !important;
-    /*position: sticky;*/ /* Badly works... */
     top: 0; left: 0; right: 0; bottom: 0;
-    min-width: min-content;
-    min-height: min-content;
+    min-width: min(100cqw, 100%);
+    min-height: min(100cqh, 100%);
+    width: min-content;
+    height: min-content;
     overflow: visible;
     box-sizing: border-box;
     will-change: scroll-position;
@@ -158,6 +162,7 @@
 }
 
 :host > .scrollable {
+    white-space: nowrap;
     will-change: scroll-position;
 
     /* */
@@ -224,9 +229,6 @@
 :host > .scroll-x > .track, 
 :host > .scroll-y > .track 
 {
-    /* for touch screen */
-    /*position: sticky; */
-
     /* */
     box-sizing: border-box;
     overflow: hidden;
