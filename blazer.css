@@ -6,16 +6,19 @@
 */
 
 /* */
-:root {
+:root, html {
     --content: url("data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=");
     --display: inline-block;
 
+    color: rgba(1,1,1,1);
+    background-color: white;
     padding: 0px;
     margin: 0px;
 }
 
 /* Better Text Format */
 body, p, h1, h2, h3, h4, h5, h6, a, span, .text {
+    color: rgba(1,1,1,1);
     width: max-content;
     max-width: min(min(100cqw, 9999px), 100%);
     word-break: break-all;
@@ -24,6 +27,15 @@ body, p, h1, h2, h3, h4, h5, h6, a, span, .text {
     text-align: justify;
     padding: 0;
     margin: 0;
+}
+
+a {
+    color: #017F7F;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: #107F7F;
 }
 
 body, h1, h2, h3, h4, h5, h6, p, div {
@@ -54,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
     /* */
     background-color: transparent;
     will-change: contents, content, transform;
-    filter: opacity(100%);
+    filter: grayscale(0%);
 
     /* */
     -webkit-backface-visibility: hidden;
@@ -79,7 +91,7 @@ h1, h2, h3, h4, h5, h6 {
     content: var(--content);
 
     /* Some filter hack */
-    filter: opacity(100%);
+    filter: grayscale(0%);
 
     /*  */
     overflow: hidden;
@@ -99,12 +111,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 * {
+    background-blend-mode: normal;
+    mix-blend-mode: normal;
+    isolation: isolate;
+
+    /* */
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
     font-smooth: always;
     text-rendering: optimizeLegibility;
     text-rendering: geometricPrecision;
-    filter: opacity(100%);
+    filter: grayscale(0%);
 
     /* */
     -webkit-perspective: 1000;

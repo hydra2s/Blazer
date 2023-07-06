@@ -69,7 +69,7 @@
     transform-origin: 50% 50%;
 
     /* Some filter hack */
-    filter: opacity(100%);
+    filter: grayscale(0%);
     overflow: hidden;
     scrollbar-width: none;
     box-sizing: border-box;
