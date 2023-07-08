@@ -62,34 +62,8 @@
 Opened with special library and polyfill, context menu not supported...
 DO NOT SAVE! It's generated as PNG from JNG image file in browser.</div><br/>
         
-        <picture>
         <img src="./img/test.jng" id="jng" alt="JNG-image"/>
-        
-        <script async type="module">
-            // Ha-ha, JNG can be opended in browser by such way...
-            import {
-                initializeImageMagick,
-                ImageMagick,
-                Magick,
-                MagickFormat,
-                Quantum,
-            } from './@imagemagick/magick-wasm';
-
-            initializeImageMagick("./@imagemagick/magick-wasm/dist/magick.wasm").then(async() => {
-                console.log(Magick.imageMagickVersion);
-                console.log('Delegates:', Magick.delegates);
-                console.log('Features:', Magick.features);
-                console.log('Quantum:', Quantum.depth);
-
-                ImageMagick.read(new Uint8Array(await (await fetch('./img/test.jng')).arrayBuffer()), image => {
-                    image.write(MagickFormat.Png, data => {
-                        document.querySelector("#jng").src = URL.createObjectURL(new Blob([data], {type: "image/png"}));
-                    });
-                })
-            }).catch(err => {
-                console.error(err);
-            });
-        </script>
+        <script async type="module" src="./magick-jng.js"></script>
     </div>
 </div>
 
