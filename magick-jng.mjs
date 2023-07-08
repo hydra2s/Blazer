@@ -5,7 +5,7 @@
     Magick,
     MagickFormat,
     Quantum,
-} from './@imagemagick/magick-wasm';
+} from './@imagemagick/magick-wasm/dist';
 
 initializeImageMagick("./@imagemagick/magick-wasm/dist/magick.wasm?raw").then(async() => {
     console.log(Magick.imageMagickVersion);
