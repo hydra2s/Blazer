@@ -7,7 +7,7 @@
     Quantum,
 } from './@imagemagick/magick-wasm';
 
-initializeImageMagick("./@imagemagick/magick-wasm/dist/magick.wasm").then(async() => {
+initializeImageMagick("./@imagemagick/magick-wasm/dist/magick.wasm?raw").then(async() => {
     console.log(Magick.imageMagickVersion);
     console.log('Delegates:', Magick.delegates);
     console.log('Features:', Magick.features);
