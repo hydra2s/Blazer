@@ -42,6 +42,7 @@
     "jsox": "^1.2.118",
     "marked": "^5.1.0",
     "overlayscrollbars": "^2.2.0",
+    "pngjs": "^7.0.0",
     "pngjs3": "^6.1.1",
     "vanilla-context-menu": "^1.4.2",
     "vite": "^4.2.0",
