@@ -29,6 +29,7 @@
     }
   },
   "dependencies": {
+    "@imagemagick/magick-wasm": "^0.0.22",
     "@types/marked": "^5.0.0",
     "crc-32": "https://cdn.sheetjs.com/crc-32-latest/crc-32-latest.tgz",
     "dompurify": "^3.0.4",
