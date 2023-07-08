@@ -1,3 +1,7 @@
+//
+import { Float16Array, isFloat16Array, isTypedArray, getFloat16, setFloat16, f16round } from "./float16/browser/float16.mjs";
+
+// 
 import { OpenJNG } from "./lib/openjng.js"
 import { BlazerPNG } from "./lib/png.js"
 import { BlazerBMP } from "./lib/bmp.js"
@@ -22,8 +26,7 @@ export * from "./lib/utils.js"
 export * from "./lib/intercom.js"
 export * from "./lib/idb-cache.js"
 export * from "./lib/apng.js"
-
-//
+export * from "./float16/browser/float16.mjs"
 import { InterWork } from "./lib/intercom.js"
 
 //
