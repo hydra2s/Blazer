@@ -18,14 +18,14 @@ import { JNGImage } from "./lib/jng-img.js"
 
 //
 import * as utils from "./lib/utils.js"
-import * as apng from "./lib/apng.js"
+//import * as apng from "./lib/apng.js"
 
 //
 export { OpenJNG, BlazerPNG, BlazerBMP, DataReader, BlazerRGBA , OpenMNG, MNGRenderer };
 export * from "./lib/utils.js"
 export * from "./lib/intercom.js"
 export * from "./lib/idb-cache.js"
-export * from "./lib/apng.js"
+//export * from "./lib/apng.js"
 export * from "./float16/browser/float16.mjs"
 import { InterWork } from "./lib/intercom.js"
 
@@ -37,7 +37,7 @@ if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && se
     const WC = new InterWork(self); WorkerLib.interwork = WC;
     const _module = {
         OpenJNG, BlazerPNG, BlazerRGBA, BlazerBMP, OffscreenCanvas, WorkerLib, OpenMNG, MNGRenderer, 
-        ...utils, ...apng
+        ...utils,
     };
 
     // will used for await ops (such as register)
@@ -46,7 +46,7 @@ if (typeof self != "undefined" && typeof WorkerGlobalScope !== 'undefined' && se
     });
 
     //
-    WC.instance(MNGRenderer, OffscreenCanvasRenderingContext2D, OffscreenCanvas, OpenMNG, OpenJNG, BlazerPNG, BlazerBMP, apng.APNGFrame, apng.APNGControl);
+    WC.instance(MNGRenderer, OffscreenCanvasRenderingContext2D, OffscreenCanvas, OpenMNG, OpenJNG, BlazerPNG, BlazerBMP);
     WC.register("default", WorkerLib.library = _module);
     WC.observe();
 }
