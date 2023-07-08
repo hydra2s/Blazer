@@ -5,7 +5,7 @@ import {
     Magick,
     MagickFormat,
     Quantum,
-} from './@imagemagick/magick-wasm/dist';
+} from './@imagemagick/magick-wasm/dist/index.mjs';
 
 //
 const _CS_ = typeof document != "undefined" ? document.currentScript : {};
