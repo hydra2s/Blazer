@@ -1,1 +1,1 @@
-emcc lodepng.cpp -msimd128 -Oz -O3 -s LINKABLE=1 -sMODULARIZE -sEXPORTED_RUNTIME_METHODS="ccall,cwrap" -s ALLOW_MEMORY_GROWTH=1 -s EXPORT_ES6=1 -s EXPORTED_FUNCTIONS="['_malloc', '_free', '_calloc', '__Z21lodepng_encode_memoryPPhPmPKhjj16LodePNGColorTypej']" -sSINGLE_FILE -o lodepng.js
+emcc lodepng.cpp -msimd128 -Oz -O3 -sTOTAL_MEMORY=4MB -sMODULARIZE -sEXPORTED_RUNTIME_METHODS="ccall,cwrap" -sALLOW_MEMORY_GROWTH=1 -sEXPORT_ES6=1 -sEXPORTED_FUNCTIONS="['_malloc', '_free', '_calloc', '__Z21lodepng_encode_memoryPPhPmPKhjj16LodePNGColorTypej']" -sSINGLE_FILE -o lodepng.js

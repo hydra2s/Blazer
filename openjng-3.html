@@ -28,7 +28,7 @@
 <label class="button" for="fileElem">Pick-Up!</label>
 </form></div>
 
-<div id="view"><img id="jng" is="img-jng" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=" srcjng=""/></div>
+<div id="view"><img id="jng" is="img-jng" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs="/></div>
 
     <style>
         #view img {
@@ -136,14 +136,14 @@
         //
         dropArea.addEventListener('drop', (e) => {
             ([...e.dataTransfer.files || e.dataTransfer.file]).forEach((file)=>{
-                _view_.setAttribute("srcjng", URL.createObjectURL(file))
+                _view_.setAttribute("src", URL.createObjectURL(file))
             })
         });
 
         //
         _input_.addEventListener("change", ()=>{
             ([..._input_.files || _input_.file]).forEach((file)=>{
-                _view_.setAttribute("srcjng", URL.createObjectURL(file))
+                _view_.setAttribute("src", URL.createObjectURL(file))
             })
         });
 
