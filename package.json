@@ -29,22 +29,11 @@
     }
   },
   "dependencies": {
-    "@imagemagick/magick-wasm": "^0.0.22",
     "@petamoriken/float16": "^3.8.1",
-    "@types/marked": "^5.0.0",
     "crc-32": "https://cdn.sheetjs.com/crc-32-latest/crc-32-latest.tgz",
-    "dompurify": "^3.0.4",
     "harmony-reflect": "^1.6.2",
-    "idb": "^7.1.1",
-    "image-js": "^0.35.4",
     "indexeddb-fs": "^2.1.5",
-    "jsdom": "^22.1.0",
     "jsox": "^1.2.118",
-    "marked": "^5.1.0",
-    "overlayscrollbars": "^2.2.0",
-    "pngjs": "^7.0.0",
-    "pngjs3": "^6.1.1",
-    "vanilla-context-menu": "^1.4.2",
     "vite": "^4.2.0",
     "ws": "^8.13.0"
   }

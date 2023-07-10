@@ -24,7 +24,6 @@ import * as utils from "./lib/utils.js"
 export { OpenJNG, BlazerPNG, BlazerBMP, DataReader, BlazerRGBA , OpenMNG, MNGRenderer };
 export * from "./lib/utils.js"
 export * from "./lib/intercom.js"
-export * from "./lib/idb-cache.js"
 //export * from "./lib/apng.js"
 export * from "./float16/browser/float16.mjs"
 import { InterWork } from "./lib/intercom.js"
